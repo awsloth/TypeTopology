@@ -24,7 +24,7 @@ record Functor {𝓤 𝓥 𝓦 𝓨 : Universe} (A : Precategory 𝓤 𝓥) (B :
      {g : Precategory.hom A b c}
    → Fhom (_∘_ {{A}} g f) ＝ _∘_ {{B}} (Fhom g) (Fhom f)
 
-open Functor {{...}}
+open Functor {{...}} public
 
 \end{code}
 
