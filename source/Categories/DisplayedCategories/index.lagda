@@ -9,5 +9,6 @@ Formalisation of displayed categories using univalent foundations.
 module Categories.DisplayedCategories.index where
 
 import Categories.DisplayedCategories.DisplayedCategory
+import Categories.DisplayedCategories.DisplayedFunctor
 
 \end{code}

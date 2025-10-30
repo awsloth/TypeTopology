@@ -42,6 +42,8 @@ record DisplayedCategory (𝓦 𝓨 : Universe) (C : Category 𝓤 𝓥) : ((�
   
   cmp-assoc    : {a b c d : obj (C ₚ)} {f' : hom {{C ₚ}} a b} {g' : hom {{C ₚ}} b c} {h' : hom {{C ₚ}} c d} {x : obj-fam a} {y : obj-fam b} {z : obj-fam c} {w : obj-fam d} {f : mor-fam f' x y} {g : mor-fam g' y z} {h : mor-fam h' z w} → transport (λ v → mor-fam v x w) (assoc {{C ₚ}}) (comp h (comp g f)) ＝ comp (comp h g) f
 
+open DisplayedCategory {{...}} public
+
 \end{code}
 
 We can now define a total category.
