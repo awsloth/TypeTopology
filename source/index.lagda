@@ -63,7 +63,7 @@
      control safety and, to the extent this is currently possible, to
      control which type theory is used.
 
-   * In our last count, on 2025.09.06, this development has 861 Agda
+   * In our last count, on 2025.09.06, this development has 864 Agda
      files with 260K lines of code, including comments and blank
      lines.
 
@@ -180,6 +180,7 @@ import MonadOnTypes.index
 import Naturals.index
 import Notation.index
 import NotionsOfDecidability.index
+import OldCategories.index
 import OrderedTypes.index
 import Ordinals.index
 import PCF.index
