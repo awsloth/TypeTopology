@@ -13,5 +13,6 @@ module Categories.index where
 import Categories.Type
 import Categories.Functor
 import Categories.NaturalTransformation
+import Categories.DisplayedCategories.Type
 
 \end{code}

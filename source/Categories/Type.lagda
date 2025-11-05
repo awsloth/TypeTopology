@@ -297,6 +297,7 @@ instance
    → Underlying-Type (Category 𝓤 𝓥) (Precategory 𝓤 𝓥)
   ⟨_⟩ {{underlying-precategory-of-category}} (P , _) = P
 
+instance
   underlying-wildcategory-of-category
    : {𝓤 𝓥 : Universe}
    → Underlying-Type (Category 𝓤 𝓥) (WildCategory 𝓤 𝓥)
