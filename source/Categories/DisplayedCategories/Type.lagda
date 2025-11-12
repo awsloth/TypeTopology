@@ -27,9 +27,7 @@ the usual structure of a category.
 
 \begin{code}
 
-
-
-record DisplayedCategory (𝓦 𝓨 : Universe) (C : Category 𝓤 𝓥) : ((𝓦 ⊔ 𝓨) ⊔ (𝓤 ⊔ 𝓥))⁺ ̇  where
+record DisplayedPrecategory (𝓦 𝓨 : Universe) (C : Precategory 𝓤 𝓥) : ((𝓦 ⊔ 𝓨) ⊔ (𝓤 ⊔ 𝓥))⁺ ̇  where
  field
   obj-fam : (c : obj ⟨ C ⟩) → 𝓦 ̇
   hom-fam : {a b : obj ⟨ C ⟩}
@@ -84,17 +82,17 @@ record DisplayedCategory (𝓦 𝓨 : Universe) (C : Category 𝓤 𝓥) : ((�
               {h : hom-fam h' z w}
             → comp h (comp g f) ＝⟦ (λ v → hom-fam v x w) , assoc {{⟨ C ⟩}} ⟧ comp (comp h g) f
 
-open DisplayedCategory {{...}} public
+open DisplayedPrecategory {{...}} public
 
 \end{code}
 
-We can now define a total category.
+We can now define a total precategory.
 
 \begin{code}
 
 
-TotalCategory : {𝓦 𝓨 : Universe} {C : Category 𝓤 𝓥} (D : DisplayedCategory 𝓦 𝓨 C) → Category (𝓤 ⊔ 𝓦) (𝓥 ⊔ 𝓨)
-TotalCategory {𝓤} {𝓥} {𝓦} {𝓨} {C} D = (wildcategory , total-is-precategory) , total-is-category
+TotalCategory : {𝓦 𝓨 : Universe} {C : Precategory 𝓤 𝓥} (D : DisplayedPrecategory 𝓦 𝓨 C) → Precategory (𝓤 ⊔ 𝓦) (𝓥 ⊔ 𝓨)
+TotalCategory {𝓤} {𝓥} {𝓦} {𝓨} {C} D = (wildcategory , total-is-precategory)
  where
   wildcategory : WildCategory (𝓤 ⊔ 𝓦) (𝓥 ⊔ 𝓨)
   wildcategory = wildmake (Σ c ꞉ obj ⟨ C ⟩ , obj-fam {{D}} c)
@@ -106,8 +104,6 @@ TotalCategory {𝓤} {𝓥} {𝓦} {𝓨} {C} D = (wildcategory , total-is-preca
                           (to-Σ-＝ (assoc {{⟨ C ⟩}} , (Idtofun (dependent-Id-via-transport _ _)) (cmp-assoc {{D}})))
 
   total-is-precategory : is-precategory wildcategory
-  total-is-precategory _ _ = Σ-is-set (hom-is-set {{⟨ C ⟩}}) (λ _ → hom-fam-is-set {{D}})
+  total-is-precategory _ _ = Σ-is-set (hom-is-set {{C}}) (λ _ → hom-fam-is-set {{D}})
 
-  total-is-category : is-category (wildcategory , total-is-precategory)
-  total-is-category (a , x) (b , y) = {!!}
 \end{code}
