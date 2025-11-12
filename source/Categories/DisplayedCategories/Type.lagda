@@ -17,7 +17,7 @@ open import UF.Sets-Properties
 
 module Categories.DisplayedCategories.Type (fe : Fun-Ext) where
 
-open import Categories.Type fe renaming (make to wildmake)
+open import Categories.Type 
 
 \end{code}
 
@@ -60,14 +60,14 @@ record DisplayedPrecategory (𝓦 𝓨 : Universe) (C : Precategory 𝓤 𝓥) :
                  {x : obj-fam a}
                  {y : obj-fam b}
                  (f : hom-fam f' x y)
-               → comp f (id-fam x) ＝⟦ (λ v → hom-fam v x y) , right-id {{⟨ C ⟩}} f' ⟧ f
+               → comp f (id-fam x) ＝⟦ (λ - → hom-fam - x y) , right-id {{⟨ C ⟩}} f' ⟧ f
 
   cmp-left-id : {a b : obj ⟨ C ⟩}
                 {f' : hom {{⟨ C ⟩}} a b}
                 {x : obj-fam a}
                 {y : obj-fam b}
                 (f : hom-fam f' x y)
-              → comp (id-fam y) f ＝⟦ (λ v → hom-fam v x y) , left-id {{⟨ C ⟩}} f' ⟧ f
+              → comp (id-fam y) f ＝⟦ (λ - → hom-fam - x y) , left-id {{⟨ C ⟩}} f' ⟧ f
   
   cmp-assoc : {a b c d : obj ⟨ C ⟩}
               {f' : hom {{⟨ C ⟩}} a b}
@@ -95,13 +95,13 @@ TotalCategory : {𝓦 𝓨 : Universe} {C : Precategory 𝓤 𝓥} (D : Displaye
 TotalCategory {𝓤} {𝓥} {𝓦} {𝓨} {C} D = (wildcategory , total-is-precategory)
  where
   wildcategory : WildCategory (𝓤 ⊔ 𝓦) (𝓥 ⊔ 𝓨)
-  wildcategory = wildmake (Σ c ꞉ obj ⟨ C ⟩ , obj-fam {{D}} c)
-                          (λ (a , x) (b , y) → Σ f ꞉ hom {{⟨ C ⟩}} a b , hom-fam {{D}} f x y)
-                          (λ {(a , x)} → id {{⟨ C ⟩}} , id-fam {{D}} x)
-                          (λ (g' , g) (f' , f) → (g' ∘⟨ ⟨ C ⟩ ⟩ f') , comp {{D}} g f)
-                          (λ (f' , f) → to-Σ-＝ (left-id {{⟨ C ⟩}} f' , (Idtofun (dependent-Id-via-transport _ _)) (cmp-left-id {{D}} f)))
-                          ((λ (f' , f) → to-Σ-＝ (right-id {{⟨ C ⟩}} f' , (Idtofun (dependent-Id-via-transport _ _)) (cmp-right-id {{D}} f))))
-                          (to-Σ-＝ (assoc {{⟨ C ⟩}} , (Idtofun (dependent-Id-via-transport _ _)) (cmp-assoc {{D}})))
+  wildcategory = wildcat-make (Σ c ꞉ obj ⟨ C ⟩ , obj-fam {{D}} c)
+                              (λ (a , x) (b , y) → Σ f ꞉ hom {{⟨ C ⟩}} a b , hom-fam {{D}} f x y)
+                              (λ {(a , x)} → id {{⟨ C ⟩}} , id-fam {{D}} x)
+                              (λ (g' , g) (f' , f) → (g' ∘⟨ ⟨ C ⟩ ⟩ f') , comp {{D}} g f)
+                              (λ (f' , f) → to-Σ-＝ (left-id {{⟨ C ⟩}} f' , (Idtofun (dependent-Id-via-transport _ _)) (cmp-left-id {{D}} f)))
+                              ((λ (f' , f) → to-Σ-＝ (right-id {{⟨ C ⟩}} f' , (Idtofun (dependent-Id-via-transport _ _)) (cmp-right-id {{D}} f))))
+                              (to-Σ-＝ (assoc {{⟨ C ⟩}} , (Idtofun (dependent-Id-via-transport _ _)) (cmp-assoc {{D}})))
 
   total-is-precategory : is-precategory wildcategory
   total-is-precategory _ _ = Σ-is-set (hom-is-set {{C}}) (λ _ → hom-fam-is-set {{D}})
