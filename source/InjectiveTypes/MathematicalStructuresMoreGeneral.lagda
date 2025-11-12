@@ -6,13 +6,14 @@ types, ∞-magmas, magmas, monoids, groups etc.
 We give a sufficient condition for types of mathematical structures to
 be injective, and we apply it to examples such as the above.
 
-This file generalized InjectiveTypes.MathematicalStructures at the
+This file generalizes InjectiveTypes.MathematicalStructures at the
 cost of perhaps being harder to understand. It relies on the file
 InjectiveTypes.Sigma, which also arises as a generalization of the
 above original file.
 
 Added 5 November 2025 by Tom de Jong: The type of metric spaces is
-injective and this relies on the generalizations developed here.
+injective and this relies on the generalizations developed here. This
+is the first example that make uses of the added generality of this file.
 
 \begin{code}
 
@@ -122,10 +123,6 @@ universes-are-flabby-Σ = to-aflabby universes-are-Flabby-Σ
 
 \end{code}
 
-In this file we apply the above constructions only for the case of Π,
-but we include those for Σ for the sake illustration (and perhaps for
-future use).
-
 We now work with an arbitrary notion S of structure on 𝓤. E.g. for
 monoids we will take S X := X → X → X, the type of the multiplication
 operation.
@@ -156,7 +153,8 @@ data.
 \end{code}
 
 We will apply this to get our desired examples with ϕ taken to be the
-above canonical Π-flabby structure on the universe.
+above canonical Π-flabby structure on the universe in most cases, and
+at least one with the canonical Σ-flabby structure.
 
 Next we want to simplify working with compatibility data (as defined
 in the module InjectiveTypes.Sigma), where we avoid transports by
@@ -328,10 +326,9 @@ try to record this explicitly when we do so).
 
 \end{code}
 
-For our examples below, we only need the above functions ρΠ,
-compatibility-data-Π and Π-construction, but we take the opportunity
-to remark that we also have the following, with Π replaced by Σ (for
-which we don't have any application so far).
+For most examples below, we only need the above functions ρΠ,
+compatibility-data-Π and Π-construction, but at least one of them uses
+their Σ versions defined below.
 
 \begin{code}
 
@@ -966,7 +963,7 @@ above. Indeed, the injectivity proof mirrors the above construction for Graph.
 
 open import UF.Subsingletons-Properties
 
-module _ (R : 𝓥 ̇  ) where
+module _ (R : 𝓥 ̇ ) where
 
  Graph' : (𝓤 : Universe) → 𝓤 ⁺ ⊔ 𝓥 ̇
  Graph' 𝓤 = Σ X ꞉ 𝓤 ̇  , (X → X → R)
@@ -1045,7 +1042,7 @@ module _
   renaming (_+_ to _+ℝ_) hiding (_-_)
  open import DedekindReals.Order fe' pe' pt
  open import DedekindReals.Type fe' pe' pt
- open import MetricSpaces.Alternative fe' pe' pt
+ open import MetricSpaces.StandardDefinition fe' pe' pt
 
  Metric-Space-Σ-data : compatibility-data {(𝓤 ⊔ 𝓤₁) ⁺}
                         (λ M → Σ d ꞉ (M → M → ℝ) , metric-axioms M d)
@@ -1095,12 +1092,12 @@ module _
      d : Σ A → Σ A → ℝ
      d (h₁ , a₁) (h₂ , a₂) = α h₁ (τ a₁) (τ a₂)
 
-     generalized-lemma : {h₁ h₂ : p holds} {a₁ : A h₁} {a₂ : A h₂}
-                         (e₁ : h₂ ＝ h₁) (e₂ : h₁ ＝ h₁)
-                         (e₃ : h₂ ＝ h₂) (e₄ : h₁ ＝ h₂)
-                       → α h₁ (transport A e₁ a₂) (transport A e₂ a₁)
-                       ＝ α h₂ (transport A e₃ a₂) (transport A e₄ a₁)
-     generalized-lemma {h₁} {h₂} {a₁} {a₂} refl e₂ e₃ e₄ =
+     lemma : {h₁ h₂ : p holds} {a₁ : A h₁} {a₂ : A h₂}
+             (e₁ : h₂ ＝ h₁) (e₂ : h₁ ＝ h₁)
+             (e₃ : h₂ ＝ h₂) (e₄ : h₁ ＝ h₂)
+           → α h₁ (transport A e₁ a₂) (transport A e₂ a₁)
+             ＝ α h₂ (transport A e₃ a₂) (transport A e₄ a₁)
+     lemma {h₁} {h₂} {a₁} {a₂} refl e₂ e₃ e₄ =
       ap₂ (α h₂)
           ((transport-over-prop' (holds-is-prop p) e₃) ⁻¹)
           (ap (λ - → transport A - a₁)
@@ -1112,11 +1109,11 @@ module _
 
      dₚ-equals-d-left : {h₁ h₂ : p holds} {a₁ : A h₁} {a₂ : A h₂}
                       → dₚ (τ a₁) a₂ ＝ d (h₁ , a₁) (h₂ , a₂)
-     dₚ-equals-d-left = generalized-lemma i refl i i
+     dₚ-equals-d-left = lemma i refl i i
 
      dₚ-equals-d-right : {h₁ h₂ : p holds} {a₁ : A h₁} {a₂ : A h₂}
                        → dₚ a₁ (τ a₂) ＝ d (h₁ , a₁) (h₂ , a₂)
-     dₚ-equals-d-right = generalized-lemma refl refl i refl
+     dₚ-equals-d-right = lemma refl refl i refl
 
      _ : σ p A α ＝ d
      _ = refl -- Which is crucial for the proof below to work.
@@ -1125,14 +1122,15 @@ module _
      I x@(h₁ , a) y@(h₂ , a') = I₁ , I₂
       where
        I₁ : d x y ＝ 0ℝ → x ＝ y
-       I₁ e = to-Σ-＝ (i , lr-implication (dₚ-reflexive (τ a) a') (dₚ-equals-d-left ∙ e))
+       I₁ e = to-Σ-＝ (i , lr-implication (dₚ-reflexive (τ a) a')
+                                          (dₚ-equals-d-left ∙ e))
        I₂ : x ＝ y → d x y ＝ 0ℝ
        I₂ refl = rl-implication (dₚ-reflexive (τ a) (τ a)) refl
 
      II : symmetry (Σ A) d
      II (h₁ , a₁) (h₂ , a₂) =
       dₚ {h₁} (τ a₁) (τ a₂) ＝⟨ dₚ-symmetric (τ a₁) (τ a₂) ⟩
-      dₚ {h₁} (τ a₂) (τ a₁) ＝⟨ generalized-lemma i i i i ⟩
+      dₚ {h₁} (τ a₂) (τ a₁) ＝⟨ lemma i i i i ⟩
       dₚ {h₂} (τ a₂) (τ a₁) ∎
 
      III : triangle-inequality (Σ A) (σ p A α)
@@ -1147,7 +1145,7 @@ module _
          lem : (e₁ : h₁ ＝ h₂) (e₂ : h₃ ＝ h₂)
              → dₚ {h₂} (transport A e₁ a₁) (transport A e₂ a₃)
                ＝ d (h₁ , a₁) (h₃ , a₃)
-         lem refl refl = generalized-lemma refl refl i i
+         lem refl refl = lemma refl refl i i
 
  ainjectivity-of-Metric-Space
   : ainjective-type (Metric-Space (𝓤₁ ⊔ 𝓤)) (𝓤₁ ⊔ 𝓤) (𝓤₁ ⊔ 𝓤)
