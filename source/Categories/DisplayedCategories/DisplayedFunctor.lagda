@@ -9,13 +9,12 @@ Definition of a displayed functor.
 open import MLTT.Spartan
 open import Notation.UnderlyingType
 open import UF.DependentEquality
-open import UF.FunExt
 
-module Categories.DisplayedCategories.DisplayedFunctor (fe : Fun-Ext) where
+module Categories.DisplayedCategories.DisplayedFunctor where
 
-open import Categories.Type fe
-open import Categories.Functor fe
-open import Categories.DisplayedCategories.Type fe
+open import Categories.Type
+open import Categories.Functor
+open import Categories.DisplayedCategories.Type
 
 record DisplayedFunctor {C : Precategory 𝓦 𝓣}
                         {C' : Precategory 𝓦' 𝓣'}

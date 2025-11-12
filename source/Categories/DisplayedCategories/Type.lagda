@@ -11,11 +11,10 @@ open import Notation.UnderlyingType
 open import UF.Base
 open import UF.DependentEquality
 open import UF.Equiv hiding (_≅_ ; _≅⟨_⟩_)
-open import UF.FunExt
 open import UF.Sets
 open import UF.Sets-Properties
 
-module Categories.DisplayedCategories.Type (fe : Fun-Ext) where
+module Categories.DisplayedCategories.Type where
 
 open import Categories.Type 
 
@@ -91,8 +90,8 @@ We can now define a total precategory.
 \begin{code}
 
 
-TotalCategory : {𝓦 𝓨 : Universe} {C : Precategory 𝓤 𝓥} (D : DisplayedPrecategory 𝓦 𝓨 C) → Precategory (𝓤 ⊔ 𝓦) (𝓥 ⊔ 𝓨)
-TotalCategory {𝓤} {𝓥} {𝓦} {𝓨} {C} D = (wildcategory , total-is-precategory)
+TotalPrecategory : {𝓦 𝓨 : Universe} {C : Precategory 𝓤 𝓥} (D : DisplayedPrecategory 𝓦 𝓨 C) → Precategory (𝓤 ⊔ 𝓦) (𝓥 ⊔ 𝓨)
+TotalPrecategory {𝓤} {𝓥} {𝓦} {𝓨} {C} D = (wildcategory , total-is-precategory)
  where
   wildcategory : WildCategory (𝓤 ⊔ 𝓦) (𝓥 ⊔ 𝓨)
   wildcategory = wildcat-make (Σ c ꞉ obj ⟨ C ⟩ , obj-fam {{D}} c)
