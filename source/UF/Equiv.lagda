@@ -13,6 +13,7 @@ open import MLTT.Unit-Properties
 open import UF.Base
 open import UF.Retracts
 open import UF.Subsingletons
+open import UF.Subsingletons-Properties
 
 \end{code}
 
@@ -897,6 +898,41 @@ involution-swap-≃ f f-involutive X-is-set {x} {y} =
             ∘ (involution-swap f f-involutive {b} {a})
             ∼ id
   I a b e = X-is-set _ _
+
+\end{code}
+
+Added by Anna Williams 19 November 2025
+
+We show that for subtypes, equality on subtypes is equivalent
+to equality on the base type.
+
+\begin{code}
+
+subtype-equiv : {X : 𝓤 ̇ }
+                (P : X → 𝓥 ̇ )
+              → (Π x ꞉ X , is-prop (P x))
+              → (x y : Σ P)
+              → (x ＝ y) ≃ (pr₁ x ＝ pr₁ y)
+subtype-equiv {_} {_} {X} P p (x , px) (y , py) = forwards , ((backwards , p-has-section) , (backwards , p-is-section))
+ where
+  h : {x : X} {px px' : P x} → px ＝ px' → x , px ＝ x , px'
+  h refl = refl
+
+  forwards : (x , px) ＝ (y , py) → x ＝ y
+  forwards refl = refl
+
+  backwards : x ＝ y → (x , px) ＝ (y , py)
+  backwards refl = h (p x px py)
+
+  p-has-section : forwards ∘ backwards ∼ id
+  p-has-section refl = t (p x px py)
+   where
+    t : px ＝ py → (forwards ∘ backwards) refl ＝ id refl
+    t refl = ap (forwards ∘ h) (props-are-sets (p x) (p x px px) refl)
+
+  p-is-section : backwards ∘ forwards ∼ id
+  p-is-section refl = ap h (props-are-sets (p x) (p x px px) refl)
+    
 
 \end{code}
 
