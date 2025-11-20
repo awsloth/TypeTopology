@@ -14,4 +14,6 @@ import Categories.Type
 import Categories.Functor
 import Categories.NaturalTransformation
 
+import Categories.Examples.index
+
 \end{code}
