@@ -40,7 +40,7 @@ module _ {𝓤 : Universe} where
                        (λ g f x → g (f x))
                        (λ _ → refl)
                        (λ _ → refl)
-                       refl
+                       (λ _ _ _ → refl)
 
 \end{code}
 
@@ -75,7 +75,41 @@ And finally the category of sets.
                                      (X , sX) (Y , sY)
 
    ii : (X ≃ Y) ≃ wildcat-iso-explicit SetWildcat (X , sX) (Y , sY)
-   ii = {!!}
+   ii = pi-equiv-to-sum-equiv equiv-equiv-iso
+    where
+     qinv-equiv-iso : (f : X → Y) → qinv f ≃ is-iso {{SetWildcat}} {X , sX} {Y , sY} f
+     qinv-equiv-iso f = forwards , ((backwards , left) , (backwards , right))
+      where
+       forwards : qinv f → is-iso {{SetWildcat}} {X , sX} {Y , sY} f
+       forwards (g , lg , rg) = g , (inverse _ (fe _ _) lg , inverse _ (fe _ _) rg)
+
+       backwards : is-iso {{SetWildcat}} {X , sX} {Y , sY} f → qinv f
+       backwards (g , lg , rg) = g , (λ x → ap (λ - → - x) lg) , λ y → ap (λ - → - y) rg
+
+       left : (λ x → forwards (backwards x)) ∼ id
+       left (g , lg , rg) = to-Σ-＝ (refl , (to-×-＝ (Π-is-set fe (λ x → sX _ _) _ _) (Π-is-set fe (λ y → sY _ _) _ _)))
+
+       right : (λ x → backwards (forwards x)) ∼ id
+       right (g , lg , rg) = to-Σ-＝ (refl , (to-×-＝ (inverse _ (fe _ _) (λ x → sX _ _ _ _)) (inverse _ (fe _ _) (λ y → sY _ _ _ _))))
+
+     lem' : (f : X → Y) → is-equiv f ≃ qinv f
+     lem' f = (equivs-are-qinvs f) , (((qinvs-are-equivs f) , left) , (qinvs-are-equivs f , right))
+      where
+       left : (λ x → equivs-are-qinvs f (qinvs-are-equivs f x)) ∼ (λ x → x)
+       left e@(g , gl , gr) = to-Σ-＝ (refl , (to-×-＝ (inverse _ (fe _ _) (λ x → sX _ _ _ _)) refl))
+
+       right : (λ x → qinvs-are-equivs f (equivs-are-qinvs f x)) ∼ (λ x → x)
+       right e@((g , gp) , (g' , gp')) = to-×-＝ refl (to-Σ-＝ (equality , (inverse _ (fe _ _) λ x → sX _ _ _ _)))
+        where
+         equality : g ＝ g'
+         equality = g                    ＝⟨ refl ⟩
+                    (λ x → id (g x))     ＝⟨ inverse _ (fe _ _) (λ x → (gp' (g x))⁻¹) ⟩
+                    (λ x → g' (f (g x))) ＝⟨ inverse _ (fe _ _) (λ x → ap g' (gp x)) ⟩
+                    (λ x → g' (id x))    ＝⟨ refl ⟩
+                    g' ∎
+
+     equiv-equiv-iso : (f : X → Y) → is-equiv f ≃ is-iso {{SetWildcat}} {X , sX} {Y , sY} f
+     equiv-equiv-iso f = ≃-comp (lem' f) (qinv-equiv-iso f)
 
  SetCat : (ua : is-univalent 𝓤)
           (fe : Fun-Ext)
@@ -83,7 +117,19 @@ And finally the category of sets.
  SetCat ua fe = SetPrecat fe , univalence-property
   where
    univalence-property : is-category (SetPrecat fe)
-   univalence-property (X , sX) (Y , sY) = {!!}
+   univalence-property (X , sX) (Y , sY) = (eq-to-id , left) , eq-to-id , right
+    where
+     univ : (X , sX ＝ Y , sY) ≃ wildcat-iso-explicit SetWildcat (X , sX) (Y , sY)
+     univ = lem ua fe (X , sX) (Y , sY)
+
+     eq-to-id : wildcat-iso-explicit SetWildcat (X , sX) (Y , sY) → (X , sX ＝ Y , sY)
+     eq-to-id = inverse _ (pr₂ univ) 
+
+     left : (λ x → id-to-iso {{SetWildcat}} (X , sX) (Y , sY) (eq-to-id x)) ∼ (λ x → x)
+     left x = {!!}
+
+     right : (λ x → eq-to-id (id-to-iso {{SetWildcat}} (X , sX) (Y , sY) x)) ∼ (λ x → x)
+     right refl = {!!}
 
 \end{code}
 

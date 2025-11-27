@@ -60,9 +60,9 @@ record WildCategory (𝓤 𝓥 : Universe) : (𝓤 ⊔ 𝓥)⁺ ̇  where
   right-id : {a b : obj} → (f : hom a b) → f ∘ id ＝ f
   
   assoc : {a b c d : obj}
-          {f : hom a b}
-          {g : hom b c}
-          {h : hom c d}
+          (f : hom a b)
+          (g : hom b c)
+          (h : hom c d)
         → h ∘ (g ∘ f) ＝ (h ∘ g) ∘ f
 
 \end{code}
@@ -233,7 +233,7 @@ being-iso-is-prop {{P}} {a} {b} f x y = inv-is-lc x y (inverse-eq {{⟨ P ⟩}} 
    where
     i   = (right-id (inv x))⁻¹
     ii  = ap (λ - → inv x ∘ -) (r-inverse y)⁻¹
-    iii = assoc
+    iii = assoc _ _ _
     iv  = ap (λ - → - ∘ inv y) (l-inverse x)
     v   = left-id (inv y)
 
@@ -265,10 +265,8 @@ id-to-iso : {{ W : WildCategory 𝓤 𝓥 }}
             (a b : obj W )
           → a ＝ b
           → a ≅⟨ W ⟩ b
-id-to-iso a b refl = id , mk-iso id id-comp-id-is-id id-comp-id-is-id
- where
-  id-comp-id-is-id : id ∘ id ＝ id
-  id-comp-id-is-id = left-id id
+id-to-iso a b refl = id , mk-iso id (left-id id) (left-id id)
+
 \end{code}
 
 To bring into alignment the two different forms of equality, we define a

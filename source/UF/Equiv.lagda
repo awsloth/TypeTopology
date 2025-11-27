@@ -932,7 +932,30 @@ subtype-equiv {_} {_} {X} P p (x , px) (y , py) = forwards , ((backwards , p-has
 
   p-is-section : backwards ∘ forwards ∼ id
   p-is-section refl = ap h (props-are-sets (p x) (p x px px) refl)
-    
+
+\end{code}
+
+Added by Anna Williams 24 November 2025
+
+\begin{code}
+
+pi-equiv-to-sum-equiv : {X : 𝓤 ̇ }
+                        {P Q : X → 𝓥 ̇ }
+                      → ((x : X) → (P x) ≃ (Q x))
+                      → (Σ x ꞉ X , P x) ≃ (Σ x ꞉ X , Q x)
+pi-equiv-to-sum-equiv {_} {_} {X} {P} {Q} pa = (λ (x , Px) → x , pr₁ (pa x) Px) , (inv , left) , (inv' , right)
+ where
+  inv : (Σ x ꞉ X , Q x) → (Σ x ꞉ X , P x)
+  inv (x , Qx) = x , inverse _ (pr₂ (pa x)) Qx
+
+  inv' : (Σ x ꞉ X , Q x) → (Σ x ꞉ X , P x)
+  inv' (x , Qx) = x , pr₁ (pr₂ (pr₂ (pa x))) Qx
+
+  left : (λ x → inv x .pr₁ , pr₁ (pa (inv x .pr₁)) (inv x .pr₂)) ∼ (λ x → x)
+  left (x , Qx) = to-Σ-＝ (refl , (pr₂ (pr₁ (pr₂ (pa x))) Qx))
+
+  right : (λ x → inv' (x .pr₁ , pr₁ (pa (x .pr₁)) (x .pr₂))) ∼ (λ x → x) 
+  right (x , Px) = to-Σ-＝ (refl , pr₂ (pr₂ (pr₂ (pa x))) Px)
 
 \end{code}
 
