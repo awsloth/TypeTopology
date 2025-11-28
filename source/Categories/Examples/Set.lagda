@@ -117,20 +117,10 @@ be done using SIP.
         → Category (𝓤 ⁺) 𝓤
  SetCat ua fe = SetPrecat fe , univalence-property
   where
+   h : (a b : obj SetWildcat) → id-to-iso {{SetWildcat}} a b ∼ ⌜ lem ua fe a b ⌝
+   h (a , sA) b refl = to-Σ-＝ (refl , (to-Σ-＝ (refl , to-×-＝ (Π-is-set fe (λ x → sA _ _) _ _) (Π-is-set fe (λ x → sA _ _) _ _))))
+
    univalence-property : is-category (SetPrecat fe)
-   univalence-property (X , sX) (Y , sY) = (eq-to-id , left) , eq-to-id , right
-    where
-     univ : (X , sX ＝ Y , sY) ≃ wildcat-iso-explicit SetWildcat (X , sX) (Y , sY)
-     univ = lem ua fe (X , sX) (Y , sY)
-
-     eq-to-id : wildcat-iso-explicit SetWildcat (X , sX) (Y , sY) → (X , sX ＝ Y , sY)
-     eq-to-id = inverse _ (pr₂ univ) 
-
-     left : (λ x → id-to-iso {{SetWildcat}} (X , sX) (Y , sY) (eq-to-id x)) ∼ (λ x → x)
-     left x = {!!}
-
-     right : (λ x → eq-to-id (id-to-iso {{SetWildcat}} (X , sX) (Y , sY) x)) ∼ (λ x → x)
-     right refl = {!!}
-
+   univalence-property a b = equiv-closed-under-∼ ⌜ lem ua fe a b ⌝ (id-to-iso {{SetWildcat}} a b) (pr₂ (lem ua fe a b)) (h a b)
 \end{code}
 

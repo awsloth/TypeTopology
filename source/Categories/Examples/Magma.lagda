@@ -4,7 +4,7 @@ The Category of Magmas
 
 \begin{code}
 
-{-# OPTIONS --without-K  #-}
+{-# OPTIONS --safe --without-K  #-}
 
 open import Categories.Type hiding (id ; _∘_)
 open import MLTT.Spartan
