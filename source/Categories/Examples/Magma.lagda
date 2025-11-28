@@ -136,6 +136,7 @@ We show that Magmas have univalence
      → ι (X , s) (X , t) (≃-refl _) ◁ (s ＝ t)
    h (_·_ , sX) (_*_ , sX') = forwards , (backwards , retract)
     where
+     -- add types here
      forwards = (λ p x y → ap (λ - → - x y) (ap pr₁ p))
      backwards = λ p → to-×-＝ (inverse _ (fe _ _)
                                 λ x → inverse _ (fe _ _)
@@ -152,10 +153,16 @@ We show that Magmas have univalence
 
    θ {X} = canonical-map-equiv-criterion' ι ρ h
 
+ inverse' : {a b : 𝓤 ̇ }
+            {f : a → b}
+            (e : is-equiv f)
+          → (b → a)
+ inverse' = pr₁ ∘ pr₂
+
  inv-eq : {a b : 𝓤 ̇ }
           {f : a → b}
           (e : is-equiv f)
-        → pr₁ (pr₁ e) ＝ pr₁ (pr₂ e)
+        → inverse f e ＝ inverse' e
  inv-eq {_} {_} {f}
         ((g , gp) , (g' , gp')) = inverse _ (fe _ _)
                                   λ x → g x          ＝⟨ (gp' (g x))⁻¹ ⟩

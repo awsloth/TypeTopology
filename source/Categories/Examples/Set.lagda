@@ -56,7 +56,8 @@ We can now define the precategory of sets.
 
 \end{code}
 
-And finally the category of sets.
+And finally the category of sets. Notice that this proof can also
+be done using SIP.
 
 \begin{code}
 
