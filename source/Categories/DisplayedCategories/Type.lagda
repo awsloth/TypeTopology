@@ -89,7 +89,6 @@ We can now define a total precategory.
 
 \begin{code}
 
-
 TotalPrecategory : {𝓦 𝓨 : Universe} {C : Precategory 𝓤 𝓥} (D : DisplayedPrecategory 𝓦 𝓨 C) → Precategory (𝓤 ⊔ 𝓦) (𝓥 ⊔ 𝓨)
 TotalPrecategory {𝓤} {𝓥} {𝓦} {𝓨} {C} D = (wildcategory , total-is-precategory)
  where
