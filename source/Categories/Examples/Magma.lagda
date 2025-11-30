@@ -63,18 +63,18 @@ module _ {𝓤 : Universe} (fe : Fun-Ext) where
               → magma-comp {a} {b} {b} (magma-id {b}) f ＝ f
    magma-l-id {_} {_ , _ , sY} (f , pf) = to-Σ-＝ (refl , property-equality)
     where
-     property-equality = inverse _ (fe _ _)
-                          λ x → (inverse _ (fe _ _)
-                           λ y → sY _ _)
+     property-equality = dfunext fe
+                          λ x → dfunext fe
+                           λ y → sY _ _
 
    magma-r-id : {a b : Magma}
                 (f : magma-hom a b)
               → magma-comp {a} {a} {b} f (magma-id {a}) ＝ f
    magma-r-id {_} {_ , _ , sY} (f , pf) = to-Σ-＝ (refl , property-equality)
     where
-     property-equality = inverse _ (fe _ _)
-                          λ x → (inverse _ (fe _ _)
-                           λ y → sY _ _)
+     property-equality = dfunext fe
+                          λ x → dfunext fe
+                           λ y → sY _ _
 
    magma-assoc : {a b c d : Magma}
                  (f : magma-hom a b)
@@ -85,9 +85,9 @@ module _ {𝓤 : Universe} (fe : Fun-Ext) where
    magma-assoc {_} {_} {_} {_ , _ , S}
                (f , pf) (g , pg) (h , ph) = to-Σ-＝ (refl , property-equality)
     where
-     property-equality = inverse _ (fe _ _)
-                          λ x → (inverse _ (fe _ _)
-                           λ y → S _ _)
+     property-equality = dfunext fe
+                          λ x → dfunext fe
+                           λ y → S _ _
 
 \end{code}
 
@@ -134,16 +134,17 @@ We show that Magmas have univalence
    h : {X : 𝓤 ̇ }
        (s t : Magma-structure X)
      → ι (X , s) (X , t) (≃-refl _) ◁ (s ＝ t)
-   h (_·_ , sX) (_*_ , sX') = forwards , (backwards , retract)
+   h {X} (_·_ , sX) (_*_ , sX') = forwards , (backwards , retract)
     where
-     -- add types here
      forwards = (λ p x y → ap (λ - → - x y) (ap pr₁ p))
-     backwards = λ p → to-×-＝ (inverse _ (fe _ _)
-                                λ x → inverse _ (fe _ _)
+
+     backwards = λ p → to-×-＝ (dfunext fe
+                                λ x → dfunext fe
                                  λ y → p x y)
                                (being-set-is-prop fe sX sX')
-     retract = λ i → inverse _ (fe _ _)
-                      λ x → inverse _ (fe _ _)
+
+     retract = λ i → dfunext fe
+                      λ x → dfunext fe
                        λ y → sX _ _
 
 
@@ -196,8 +197,8 @@ We show that Magmas have univalence
              g' (f (g x · g y)) ＝⟨ gp' (g x · g y) ⟩
              g x · g y ∎
 
-     left-prop = (λ _ → Π-is-prop fe (λ _ → Π-is-prop fe (λ _ → sA)))
-     right-prop = (λ _ → Π-is-prop fe (λ _ → Π-is-prop fe (λ _ → sB)))
+     left-prop = (λ _ → Π₂-is-prop fe (λ _ _ → sA))
+     right-prop = (λ _ → Π₂-is-prop fe (λ _ _ → sB))
      
      left-inv : (λ x → g (f x)) ∼ (λ x → x)
      left-inv x = g (f x)  ＝⟨ ap (λ - → - (f x)) (inv-eq e) ⟩
@@ -206,20 +207,28 @@ We show that Magmas have univalence
      
    fromiso : A ≅⟨ MagmaWildcat ⟩ B → A ≃[ sns-data ] B
    fromiso ((f , fp) , (g , gp) , lg , rg) = f
-                                             , ((g , λ x → ap (λ - → - x) (ap pr₁ rg))
-                                               , g , λ x → ap (λ - → - x) (ap pr₁ lg))
+                                             , ((g , λ x → ap (λ - → - x)
+                                                              (ap pr₁ rg))
+                                               , g , λ x → ap (λ - → - x)
+                                                              (ap pr₁ lg))
                                              , fp
 
    left : (λ x → toiso (fromiso x)) ∼ (λ x → x)
-   left ((f , fp) , (g , gp) , lg , rg) = to-Σ-＝ (refl
-                                                , (to-Σ-＝ ((to-subtype-＝ (λ _ → Π-is-prop fe λ _ → Π-is-prop fe λ _ → sA) refl)
-                                                , to-×-＝ (hom-is-set {{MagmaPrecategory}} {A} {A} _ _)
-                                                          (hom-is-set {{MagmaPrecategory}} {B} {B} _ _))))
+   left ((f , fp) , (g , gp) , lg , rg) = to-Σ-＝ (refl , is-iso-eq)
+    where
+     inverse-eq = (to-subtype-＝ (λ _ → Π₂-is-prop fe λ _ _ → sA) refl)
+
+     left-id-eq = hom-is-set {{MagmaPrecategory}} {A} {A} _ _
+     right-id-eq = hom-is-set {{MagmaPrecategory}} {B} {B} _ _
+     axiom-equalities = to-×-＝ left-id-eq right-id-eq
+     is-iso-eq = to-Σ-＝ (inverse-eq , axiom-equalities)
    
    right : (λ x → fromiso (toiso x)) ∼ (λ x → x)
    right (f , e@((g , gp) , (g' , gp')) , fp) = to-Σ-＝ (refl
-                                                     , (to-×-＝ (to-×-＝ (to-subtype-＝ (λ p → Π-is-prop fe λ y → sB) refl)
-                                                               (to-subtype-＝ (λ p → Π-is-prop fe λ y → sA) (inv-eq e))) refl))
+                                                     , (to-×-＝ equiv-eq refl))
+    where
+     equiv-eq = (to-×-＝ (to-subtype-＝ (λ p → Π-is-prop fe λ y → sB) refl)
+                         (to-subtype-＝ (λ p → Π-is-prop fe λ y → sA) (inv-eq e)))
 
  characterization-of-magma-＝ : is-univalent 𝓤
                              → (A B : Magma)
@@ -242,9 +251,7 @@ And finally show that this is a category.
       ∼ ⌜ characterization-of-magma-＝ ua A B ⌝
    eq A@(a , _·_ , sA) B@(b , _*_ , sB) refl = to-Σ-＝ (refl , is-iso-equality)
     where
-     inverse-eq = to-subtype-＝ (λ f → Π-is-prop fe
-                                 λ x → Π-is-prop fe
-                                  λ x' → sB) refl
+     inverse-eq = to-subtype-＝ (λ f → Π₂-is-prop fe (λ _ _ → sB)) refl
      left-inv = hom-is-set {{MagmaPrecategory}} {A} {A} _ _
      right-inv = hom-is-set {{MagmaPrecategory}} {A} {A} _ _
      is-iso-equality = to-Σ-＝ (inverse-eq , to-×-＝ left-inv right-inv)
