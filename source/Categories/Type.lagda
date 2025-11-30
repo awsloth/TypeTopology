@@ -12,7 +12,6 @@ Definitions of:
 open import MLTT.Spartan hiding (_∘_ ; id)
 open import Notation.UnderlyingType
 open import UF.Base
-open import UF.Embeddings
 open import UF.Equiv hiding (_≅_ ; _≅⟨_⟩_)
 open import UF.Equiv-FunExt
 open import UF.FunExt
@@ -60,9 +59,9 @@ record WildCategory (𝓤 𝓥 : Universe) : (𝓤 ⊔ 𝓥)⁺ ̇  where
   right-id : {a b : obj} → (f : hom a b) → f ∘ id ＝ f
   
   assoc : {a b c d : obj}
-          {f : hom a b}
-          {g : hom b c}
-          {h : hom c d}
+          (f : hom a b)
+          (g : hom b c)
+          (h : hom c d)
         → h ∘ (g ∘ f) ＝ (h ∘ g) ∘ f
 
 \end{code}
@@ -104,45 +103,36 @@ An isomorphism in a category consists of a homomorphism f : hom a b
 and some "inverse" homomorphism g : hom b a, such that g ∘ f = (id a)
 and f ∘ g ＝ (id b).
 
-We first define the type of a given homomorphism being an isomorphism,
-then we define the type of isomorphism between objects of a wild category.
+We first define the property of being an isomorphism and then define
+the type of isomorphisms between objects of a wild category.
 
 \begin{code}
 
-is-iso : {{ W : WildCategory 𝓤 𝓥 }} {a b : obj W} (f : hom a b) → 𝓥 ̇ 
-is-iso {_} {_} {a} {b} f = Σ inv ꞉ hom b a , (inv ∘ f ＝ id) × (f ∘ inv ＝ id)
+is-iso : {{W : WildCategory 𝓤 𝓥}} {a b : obj W} (f : hom {{W}} a b) → 𝓥 ̇ 
+is-iso {{W}} {a} {b} f = Σ inv ꞉ hom b a , (inv ∘⟨ W ⟩ f ＝ id) × (f ∘⟨ W ⟩ inv ＝ id)
 
-inv : {{ W : WildCategory 𝓤 𝓥 }}
+inv : {{W : WildCategory 𝓤 𝓥}}
       {a b : obj W}
       {f : hom a b}
     → is-iso f
     → hom b a
 inv iso = pr₁ iso
 
-l-inverse : {{ W : WildCategory 𝓤 𝓥 }}
-            {a b : obj W}
-            {f : hom {{W}} a b}
-            (iso : is-iso f)
-          → inv iso ∘ f ＝ id 
-l-inverse iso = pr₁ (pr₂ iso)
+l-inv : {{W : WildCategory 𝓤 𝓥}}
+        {a b : obj W}
+        {f : hom a b}
+        (iso : is-iso f)
+      → inv iso ∘ f ＝ id 
+l-inv iso = pr₁ (pr₂ iso)
 
-r-inverse : {{ W : WildCategory 𝓤 𝓥 }}
-            {a b : obj W}
-            {f : hom a b}
-            (iso : is-iso f)
-          → f ∘ inv iso ＝ id
-r-inverse iso = pr₂ (pr₂ iso)
+r-inv : {{W : WildCategory 𝓤 𝓥 }}
+        {a b : obj W}
+        {f : hom a b}
+        (iso : is-iso f)
+      → f ∘⟨ W ⟩ inv iso ＝ id
+r-inv iso = pr₂ (pr₂ iso)
 
-mk-iso : {{ W : WildCategory 𝓤 𝓥 }}
-         {a b : obj W}
-         {f : hom a b}
-         (inv : hom b a)
-       → (inv ∘ f ＝ id)
-       → (f ∘ inv ＝ id)
-       → is-iso f
-mk-iso inv l-id r-id = (inv , l-id , r-id)
-
-_≅_ : {{ W : WildCategory 𝓤 𝓥 }} (a b : obj W) → 𝓥 ̇
+_≅_ : {{W : WildCategory 𝓤 𝓥}} (a b : obj W) → 𝓥 ̇
 a ≅ b = Σ f ꞉ hom a b , is-iso f
 
 wildcat-iso-explicit : (W : WildCategory 𝓤 𝓥)
@@ -152,10 +142,23 @@ wildcat-iso-explicit W a b = _≅_ {{W}} a b
 
 syntax wildcat-iso-explicit W a b = a ≅⟨ W ⟩ b
 
+iso : {{W : WildCategory 𝓤 𝓥}}
+      {a b : obj W}
+    → a ≅ b
+    → hom a b
+iso = pr₁
+
+p-is-iso : {{W : WildCategory 𝓤 𝓥}}
+        {a b : obj W}
+        (f : a ≅ b)
+      → Σ g ꞉ hom b a , (g ∘ (iso f) ＝ id) × ((iso f) ∘ g ＝ id)
+p-is-iso = pr₂
+
 \end{code}
 
-We now define the notion of a precategory, this is a wild category, where
-the type homomorphism between two objects is a set.
+We can now define the notion of a precategory. This is a wild category
+where the type homomorphisms between two objects is a set. This can be
+shown to be a proposition.
 
 \begin{code}
 
@@ -191,7 +194,7 @@ hom-is-set {{_ , p}} {a} {b} = p a b
 
 \end{code}
 
-We now show that in a precategory, for a given homomorphism, being an
+We now show that in a precategory, for any given homomorphism, being an
 isomorphism is a (mere) proposition. We argue that inverses are unique,
 and then since the type of homomorphisms between two objects is a set,
 equality between any two homomorphisms is a proposition, so our left and
@@ -205,13 +208,13 @@ inv-is-lc : {{P : Precategory 𝓤 𝓥}}
             (x y : is-iso {{⟨ P ⟩}} f)
           → inv {{⟨ P ⟩}} x ＝ inv {{⟨ P ⟩}} y
           → x ＝ y
-inv-is-lc {{P}} x y refl = ap₂ (mk-iso {{⟨ P ⟩}} (inv {{⟨ P ⟩}} x)) l-eq r-eq
+inv-is-lc {{P}} x y refl = ap₂ (λ l r → inv {{⟨ P ⟩}} x , l , r) l-eq r-eq
  where
-  l-eq : l-inverse {{⟨ P ⟩}} x ＝ l-inverse {{⟨ P ⟩}} y
-  l-eq = hom-is-set (l-inverse {{⟨ P ⟩}} x) (l-inverse {{⟨ P ⟩}} y)
+  l-eq : l-inv {{⟨ P ⟩}} x ＝ l-inv {{⟨ P ⟩}} y
+  l-eq = hom-is-set (l-inv {{⟨ P ⟩}} x) (l-inv {{⟨ P ⟩}} y)
 
-  r-eq : r-inverse {{⟨ P ⟩}} x ＝ r-inverse {{⟨ P ⟩}} y
-  r-eq = hom-is-set (r-inverse {{⟨ P ⟩}} x) (r-inverse {{⟨ P ⟩}} y)
+  r-eq : r-inv {{⟨ P ⟩}} x ＝ r-inv {{⟨ P ⟩}} y
+  r-eq = hom-is-set (r-inv {{⟨ P ⟩}} x) (r-inv {{⟨ P ⟩}} y)
 
 being-iso-is-prop : {{P : Precategory 𝓤 𝓥}}
                     {a b : obj ⟨ P ⟩}
@@ -232,15 +235,14 @@ being-iso-is-prop {{P}} {a} {b} f x y = inv-is-lc x y (inverse-eq {{⟨ P ⟩}} 
                                      inv y               ∎
    where
     i   = (right-id (inv x))⁻¹
-    ii  = ap (λ - → inv x ∘ -) (r-inverse y)⁻¹
-    iii = assoc
-    iv  = ap (λ - → - ∘ inv y) (l-inverse x)
+    ii  = ap (λ - → inv x ∘ -) (r-inv y)⁻¹
+    iii = assoc _ _ _
+    iv  = ap (λ - → - ∘ inv y) (l-inv x)
     v   = left-id (inv y)
 
 \end{code}
 
-We now argue that this means that the type of isomorphisms in a precategory
-is a set. This follows from the fact that being an isomorphism is a proposition.
+Following this, we can see that the type of isomorphisms is a set.
 
 \begin{code}
 
@@ -256,8 +258,8 @@ We wish to combine the similar notions of equivalence,
 namely the internal equality: a ＝ b and isomorphisms a ≅ b.
 
 We can in fact show that if a ＝ b, then a ≅ b. This is because if
-a ＝ b, then by path induction we need to show that a ≅ a. This is
-simple as we can form an isomophism with the identity homomorphism.
+a ＝ b, then by path induction we need to show that a ≅ a. This can
+easily be constructed as follows. This map is typically called id-to-iso
 
 \begin{code}
 
@@ -265,14 +267,16 @@ id-to-iso : {{ W : WildCategory 𝓤 𝓥 }}
             (a b : obj W )
           → a ＝ b
           → a ≅⟨ W ⟩ b
-id-to-iso a b refl = id , mk-iso id id-comp-id-is-id id-comp-id-is-id
+id-to-iso a b refl = id , (id , id-comp-id-is-id , id-comp-id-is-id)
  where
   id-comp-id-is-id : id ∘ id ＝ id
   id-comp-id-is-id = left-id id
+
 \end{code}
 
 To bring into alignment the two different forms of equality, we define a
 category to be a precategory where identification is equivalent to isomorphism.
+That is the above map is an equivalence.
 
 \begin{code}
 
@@ -282,7 +286,7 @@ is-category P = (a b : obj ⟨ P ⟩) → is-equiv (id-to-iso {{⟨ P ⟩}} a b)
 being-cat-is-prop : (fe : Fun-Ext)
                     (P : Precategory 𝓤 𝓥)
                   → is-prop (is-category P)
-being-cat-is-prop fe P x y = Π-is-prop fe (λ x → Π-is-prop fe (I x)) _ _
+being-cat-is-prop fe P x y = Π₂-is-prop fe I _ _
  where
   I : (a b : obj ⟨ P ⟩) → is-prop (is-equiv (id-to-iso {{⟨ P ⟩}} a b))
   I a b e e' = being-equiv-is-prop (λ x y → fe {x} {y})
@@ -316,8 +320,9 @@ id-to-iso-is-equiv C = pr₂ C
 
 \end{code}
 
-We can now show that the objects of any category is a 1-type. This is because
-equality between objects is exactly isomorphism, which we know is a set.
+We can now show that the objects of any category are 1-types. This is because
+equality between objects is given exactly by isomorphism, which we have shown
+forms a set.
 
 \begin{code}
 
