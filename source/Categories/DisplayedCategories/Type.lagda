@@ -79,7 +79,7 @@ record DisplayedPrecategory (𝓦 𝓨 : Universe) (C : Precategory 𝓤 𝓥) :
               {f : hom[ f' ] x y}
               {g : hom[ g' ] y z}
               {h : hom[ h' ] z w}
-            → comp h (comp g f) ＝⟦ (λ - → hom[ - ] x w) , assoc {{⟨ C ⟩}} ⟧ comp (comp h g) f
+            → comp h (comp g f) ＝⟦ (λ - → hom[ - ] x w) , assoc {{⟨ C ⟩}} f' g' h' ⟧ comp (comp h g) f
 
 open DisplayedPrecategory {{...}} public
 
@@ -99,7 +99,7 @@ TotalPrecategory {𝓤} {𝓥} {𝓦} {𝓨} {C} D = (wildcategory , total-is-pr
                               (λ (g' , g) (f' , f) → (g' ∘⟨ ⟨ C ⟩ ⟩ f') , comp {{D}} g f)
                               (λ (f' , f) → to-Σ-＝ (left-id {{⟨ C ⟩}} f' , (Idtofun (dependent-Id-via-transport _ _)) (cmp-left-id {{D}} f)))
                               ((λ (f' , f) → to-Σ-＝ (right-id {{⟨ C ⟩}} f' , (Idtofun (dependent-Id-via-transport _ _)) (cmp-right-id {{D}} f))))
-                              (to-Σ-＝ (assoc {{⟨ C ⟩}} , (Idtofun (dependent-Id-via-transport _ _)) (cmp-assoc {{D}})))
+                              (λ f g h → to-Σ-＝ ((assoc {{⟨ C ⟩}} _ _ _) , (Idtofun (dependent-Id-via-transport _ _) (cmp-assoc {{D}}))))
 
   total-is-precategory : is-precategory wildcategory
   total-is-precategory _ _ = Σ-is-set (hom-is-set {{C}}) (λ _ → hom[-]-is-set {{D}})
@@ -121,8 +121,8 @@ module _ {𝓤 𝓥 𝓤' 𝓥' : Universe} where
             (f : hom[ pr₁ iso ] d d')
           → 𝓥' ̇
  d-is-iso {C} {{D}} {c} {c'} {d} {d'} iso f = Σ g ꞉ hom[ inv {{⟨ C ⟩}} (pr₂ iso) ] d' d
-                                              , ((comp g f ＝⟦ (λ - → hom[ - ] d d) , l-inverse {{⟨ C ⟩}} (pr₂ iso) ⟧ id-fam d)
-                                                × (comp f g ＝⟦ (λ - → hom[ - ] d' d') , r-inverse {{⟨ C ⟩}} (pr₂ iso) ⟧ id-fam d'))
+                                              , ((comp g f ＝⟦ (λ - → hom[ - ] d d) , l-inv {{⟨ C ⟩}} (p-is-iso {{⟨ C ⟩}} iso) ⟧ id-fam d)
+                                                × (comp f g ＝⟦ (λ - → hom[ - ] d' d') , r-inv {{⟨ C ⟩}} (p-is-iso {{⟨ C ⟩}} iso) ⟧ id-fam d'))
 
  _≅[_]_ : {C : Precategory 𝓤 𝓥}
           {{D : DisplayedPrecategory 𝓤' 𝓥' C}}
@@ -156,7 +156,7 @@ such that following map, id-to-iso-disp is an eqivalence.
 
  is-disp-category : {C : Precategory 𝓤 𝓥}
                     (D : DisplayedPrecategory 𝓤' 𝓥' C)
-                  → {!!}
+                  → (𝓤 ⊔ 𝓤' ⊔ 𝓥') ̇
  is-disp-category {C} D = (c c' : WildCategory.obj (C .pr₁))
                           (e : c ＝ c')
                           (d : DisplayedPrecategory.obj[ D ] c)
