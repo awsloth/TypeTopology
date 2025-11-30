@@ -26,6 +26,7 @@ We first define the WildCategory of Sets
 \begin{code}
 
 module _ {𝓤 : Universe} where
+ -- This may need changing
  is-set-explicit : 𝓤 ̇ → 𝓤 ̇
  is-set-explicit A = Π a ꞉ A , Π b ꞉ A , is-prop (a ＝ b)
 
@@ -52,7 +53,8 @@ We can now define the precategory of sets.
  SetPrecat fe = (SetWildcat , set-is-precat)
   where
    set-is-precat : is-precategory SetWildcat
-   set-is-precat (X , sX) (Y , sY) {x} {y} = Π-is-set fe (λ - {a} {b} → sY a b) {x} {y}
+   set-is-precat (X , sX) (Y , sY) {x} {y}
+    = Π-is-set fe (λ - {a} {b} → sY a b) {x} {y}
 
 \end{code}
 
@@ -71,9 +73,9 @@ be done using SIP.
                                (X , sX) ≅⟨ SetWildcat ⟩ (Y , sY) ■
   where
    i : (X , sX ＝ Y , sY) ≃ (X ＝ Y)
-   i = subtype-equiv is-set-explicit (λ _ → Π-is-prop fe
-                                      (λ x → Π-is-prop fe (λ y → being-prop-is-prop fe)))
-                                     (X , sX) (Y , sY)
+   i = subtype-equiv is-set-explicit (λ _ → Π₂-is-prop fe
+                                      (λ x y → being-prop-is-prop fe))
+                                       (X , sX) (Y , sY)
 
    ii : (X ≃ Y) ≃ wildcat-iso-explicit SetWildcat (X , sX) (Y , sY)
    ii = pi-equiv-to-sum-equiv equiv-equiv-iso
