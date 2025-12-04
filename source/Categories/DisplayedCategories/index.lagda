@@ -11,4 +11,6 @@ module Categories.DisplayedCategories.index where
 import Categories.DisplayedCategories.Type
 import Categories.DisplayedCategories.DisplayedFunctor
 
+import Categories.DisplayedCategories.Examples.index
+
 \end{code}
