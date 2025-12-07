@@ -6,7 +6,7 @@ The Category of Magmas
 
 {-# OPTIONS --safe --without-K  #-}
 
-open import Categories.Type hiding (id ; _∘_)
+open import Categories.Type hiding (id ; _∘_) renaming (is-univalent to is-category)
 open import MLTT.Spartan
 open import UF.Base
 open import UF.Equiv hiding (_≅_ ; _≅⟨_⟩_)
@@ -89,6 +89,7 @@ module _ {𝓤 : Universe} (fe : Fun-Ext) where
                           λ x → dfunext fe
                            λ y → S _ _
 
+ open CategoryNotation MagmaWildcat
 \end{code}
 
 We now show that this is a precategory
@@ -171,12 +172,12 @@ We show that Magmas have univalence
                                         g' x         ∎
 
  sns-equiv-iso : (A B : Magma)
-               → (A ≃[ sns-data ] B) ≃ (A ≅⟨ MagmaWildcat ⟩ B)
+               → (A ≃[ sns-data ] B) ≃ (A ≅ B)
  sns-equiv-iso A@(a , _·_ , sA) B@(b , _*_ , sB) = toiso
                                                  , (fromiso , left)
                                                  , (fromiso , right)
   where
-   toiso : A ≃[ sns-data ] B → A ≅⟨ MagmaWildcat ⟩ B
+   toiso : A ≃[ sns-data ] B → A ≅ B
    toiso (f , e@((g , gp) , (g' , gp')) , fp)
          = (f , fp)
          , (g , hom-prop-for-inv)
@@ -205,7 +206,7 @@ We show that Magmas have univalence
                   g' (f x) ＝⟨ gp' x ⟩
                   x ∎
      
-   fromiso : A ≅⟨ MagmaWildcat ⟩ B → A ≃[ sns-data ] B
+   fromiso : A ≅ B → A ≃[ sns-data ] B
    fromiso ((f , fp) , (g , gp) , lg , rg) = f
                                              , ((g , λ x → ap (λ - → - x)
                                                               (ap pr₁ rg))
@@ -216,12 +217,12 @@ We show that Magmas have univalence
    left : (λ x → toiso (fromiso x)) ∼ (λ x → x)
    left ((f , fp) , (g , gp) , lg , rg) = to-Σ-＝ (refl , is-iso-eq)
     where
-     inverse-eq = (to-subtype-＝ (λ _ → Π₂-is-prop fe λ _ _ → sA) refl)
+     inv-eq' = (to-subtype-＝ (λ _ → Π₂-is-prop fe λ _ _ → sA) refl)
 
-     left-id-eq = hom-is-set {{MagmaPrecategory}} {A} {A} _ _
-     right-id-eq = hom-is-set {{MagmaPrecategory}} {B} {B} _ _
+     left-id-eq = hom-is-set MagmaPrecategory {A} {A} _ _
+     right-id-eq = hom-is-set MagmaPrecategory {B} {B} _ _
      axiom-equalities = to-×-＝ left-id-eq right-id-eq
-     is-iso-eq = to-Σ-＝ (inverse-eq , axiom-equalities)
+     is-iso-eq = to-Σ-＝ (inv-eq' , axiom-equalities)
    
    right : (λ x → fromiso (toiso x)) ∼ (λ x → x)
    right (f , e@((g , gp) , (g' , gp')) , fp) = to-Σ-＝ (refl
@@ -232,7 +233,7 @@ We show that Magmas have univalence
 
  characterization-of-magma-＝ : is-univalent 𝓤
                              → (A B : Magma)
-                             → (A ＝ B) ≃ (A ≅⟨ MagmaWildcat ⟩ B)
+                             → (A ＝ B) ≃ (A ≅ B)
  characterization-of-magma-＝ ua A B = ≃-comp
                                        (characterization-of-＝ ua sns-data A B)
                                        (sns-equiv-iso A B)
@@ -247,18 +248,18 @@ And finally show that this is a category.
  MagmaCategory ua = MagmaPrecategory , is-cat
   where
    eq : (A B : Magma)
-      → id-to-iso {{MagmaWildcat}} A B
+      → id-to-iso A B
       ∼ ⌜ characterization-of-magma-＝ ua A B ⌝
    eq A@(a , _·_ , sA) B@(b , _*_ , sB) refl = to-Σ-＝ (refl , is-iso-equality)
     where
-     inverse-eq = to-subtype-＝ (λ f → Π₂-is-prop fe (λ _ _ → sB)) refl
-     left-inv = hom-is-set {{MagmaPrecategory}} {A} {A} _ _
-     right-inv = hom-is-set {{MagmaPrecategory}} {A} {A} _ _
-     is-iso-equality = to-Σ-＝ (inverse-eq , to-×-＝ left-inv right-inv)
+     inv-eq' = to-subtype-＝ (λ f → Π₂-is-prop fe (λ _ _ → sB)) refl
+     left-inv = hom-is-set MagmaPrecategory {A} {A} _ _
+     right-inv = hom-is-set MagmaPrecategory {A} {A} _ _
+     is-iso-equality = to-Σ-＝ (inv-eq' , to-×-＝ left-inv right-inv)
 
-   is-cat : is-category MagmaPrecategory
+   is-cat : is-category MagmaWildcat
    is-cat A B = equiv-closed-under-∼ ⌜ characterization-of-magma-＝ ua A B ⌝
-                                     (id-to-iso {{MagmaWildcat}} A B)
+                                     (id-to-iso A B)
                                      (pr₂ (characterization-of-magma-＝ ua A B))
                                      (eq A B)
 
