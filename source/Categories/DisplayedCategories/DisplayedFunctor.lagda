@@ -18,35 +18,37 @@ open import Categories.DisplayedCategories.Type
 
 record DisplayedFunctor {C : Precategory 𝓦 𝓣}
                         {C' : Precategory 𝓦' 𝓣'}
-                        (F : Functor ⟨ C ⟩ ⟨ C' ⟩)
+                        (F' : Functor ⟨ C ⟩ ⟨ C' ⟩)
                         (D : DisplayedPrecategory 𝓤 𝓥 C)
                         (D' : DisplayedPrecategory 𝓤' 𝓥' C')
                       : (𝓦 ⊔ 𝓣 ⊔ 𝓤 ⊔ 𝓤' ⊔ 𝓥 ⊔ 𝓥') ̇  where
+ open CategoryNotation ⟨ C ⟩
+ open FunctorNotation F' renaming (functor-map to F)
+ open DisplayedNotation D
+ open DisplayedNotation D'
  field
-  obj-map : {c : obj ⟨ C ⟩}
-          → (obj[_] {{D}}) c
-          → (obj[_] {{D'}}) (Fobj {{F}} c)
-  hom-map : {c c' : obj ⟨ C ⟩}
-            {f : hom {{⟨ C ⟩}} c c'}
-            {x : obj[_] {{D}} c}
-            {y : obj[_] {{D}} c'}
-          → hom[_] {{D}} f x y
-          → hom[_] {{D'}} (Fhom {{F}} f) (obj-map x) (obj-map y)
-  id-map-pres : {c : obj ⟨ C ⟩}
-                {a : obj[_] {{D}} c}
-              → hom-map (id-fam {{D}} a)
-              ＝⟦ (λ v → hom[_] {{D'}} v _ _) , id-pres {{F}} c ⟧
-                id-fam {{D'}} (obj-map a)
+  obj-map : {c : obj C}
+          → obj[ c ]
+          → obj[ F c ]
+  hom-map : {c c' : obj C}
+            {f : hom c c'}
+            {x : obj[ c ]}
+            {y : obj[ c' ]}
+          → hom[ f ] x y
+          → hom[ F f ] (obj-map x) (obj-map y)
+  id-map-pres : {c : obj C}
+                {a : obj[ c ]}
+              → hom-map disp-id
+              ＝⟦ (λ - → hom[ - ] (obj-map a) (obj-map a)) , id-pres c ⟧
+                disp-id
   map-distrib : {a b c : obj ⟨ C ⟩}
-                {x : obj[_] {{D}} a}
-                {y : obj[_] {{D}} b}
-                {z : obj[_] {{D}} c}
-                {f' : hom {{⟨ C ⟩}} a b}
-                {g' : hom {{⟨ C ⟩}} b c}
-                {f : hom[_] {{D}} f' x y}
-                {g : hom[_] {{D}} g' y z}
-              → hom-map (comp {{D}} g f)
-              ＝⟦ (λ v → hom[_] {{D'}} v _ _) , distrib {{F}} g' f' ⟧
-                comp {{D'}} (hom-map g) (hom-map f)
+                {x : obj[ a ]}
+                {y : obj[ b ]}
+                {z : obj[ c ]}
+                {f' : hom a b}
+                {g' : hom b c}
+                {f : hom[ f' ] x y}
+                {g : hom[ g' ] y z}
+              → hom-map (g ∘' f) ＝⟦ (λ - → hom[ - ] _ _) , distrib g' f' ⟧ hom-map g ∘' hom-map f
 
 \end{code}
