@@ -6,7 +6,7 @@ The Category of Magmas
 
 {-# OPTIONS --safe --without-K  #-}
 
-open import Categories.Type hiding (id ; _∘_) renaming (is-univalent to is-category)
+open import Categories.Type hiding (id ; _∘_)
 open import MLTT.Spartan
 open import UF.Base
 open import UF.Equiv hiding (_≅_ ; _≅⟨_⟩_)

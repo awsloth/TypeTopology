@@ -6,7 +6,7 @@ The Category of Sets
 
 {-# OPTIONS --safe --without-K #-}
 
-open import Categories.Type renaming (id to c-id ; is-univalent to is-category)
+open import Categories.Type renaming (id to c-id)
 open import MLTT.Spartan hiding (_∘_)
 open import UF.Base
 open import UF.Equiv hiding (_≅_)
@@ -81,13 +81,13 @@ be done using SIP.
    ii : (X ≃ Y) ≃ (X , sX) ≅ (Y , sY)
    ii = pi-equiv-to-sum-equiv equiv-equiv-iso
     where
-     qinv-equiv-iso : (f : X → Y) → qinv f ≃ is-iso f
+     qinv-equiv-iso : (f : X → Y) → qinv f ≃ WildCategory.is-iso SetWildcat {X , sX} {Y , sY} f
      qinv-equiv-iso f = forwards , ((backwards , left) , (backwards , right))
       where
-       forwards : qinv f → is-iso f
+       forwards : qinv f → WildCategory.is-iso SetWildcat {X , sX} {Y , sY} f
        forwards (g , lg , rg) = g , (dfunext fe lg , dfunext fe rg)
 
-       backwards : is-iso f → qinv f
+       backwards : WildCategory.is-iso SetWildcat {X , sX} {Y , sY} f → qinv f
        backwards (g , lg , rg) = g , (λ x → ap (λ - → - x) lg) , λ y → ap (λ - → - y) rg
 
        left : (λ x → forwards (backwards x)) ∼ id
@@ -112,7 +112,7 @@ be done using SIP.
                     (λ x → g' (id x))    ＝⟨ refl ⟩
                     g' ∎
 
-     equiv-equiv-iso : (f : X → Y) → is-equiv f ≃ is-iso f
+     equiv-equiv-iso : (f : X → Y) → is-equiv f ≃ WildCategory.is-iso SetWildcat {X , sX} {Y , sY} f
      equiv-equiv-iso f = ≃-comp (lem' f) (qinv-equiv-iso f)
 
  SetCat : (ua : is-univalent 𝓤)

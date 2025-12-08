@@ -6,7 +6,7 @@ Univalence for Set based structures
 
 {-# OPTIONS --safe --without-K #-}
 
-open import Categories.Type renaming (id to c-id ; is-univalent to is-category)
+open import Categories.Type renaming (id to c-id)
 open import MLTT.Spartan hiding (_∘_)
 open import UF.Base
 open import UF.Equiv hiding (_≅_)
