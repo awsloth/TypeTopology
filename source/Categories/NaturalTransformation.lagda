@@ -25,13 +25,18 @@ such that it is natural:
 
 record NaturalTransformation {A : WildCategory 𝓤 𝓥}
                              {B : WildCategory 𝓦 𝓣}
-                             (F G : Functor A B)
+                             (F' G' : Functor A B)
                            : (𝓤 ⊔ 𝓥 ⊔ 𝓣) ̇  where
+ open CategoryNotation A
+ open CategoryNotation B
+ open FunctorNotation F' renaming (functor-map to F ; test to testF)
+ open FunctorNotation G' renaming (functor-map to G)
  field
-  gamma : (a : obj A) → hom {{B}} (Functor.Fobj F a) (Functor.Fobj G a)
+  -- Having problems distinguishing between functors on object
+  -- and functors on homomorphisms
+  gamma : (a : obj A) → hom (F {{testF}} a) (G {{test}} a)
   natural : {a b : obj A}
-            (f : hom {{A}} a b)
-          → (Functor.Fhom G f) ∘⟨ B ⟩ (gamma a)
-          ＝ (gamma b) ∘⟨ B ⟩ (Functor.Fhom F f)
+            (f : hom a b)
+          → G f ∘ gamma a ＝ gamma b ∘ F f
 
 \end{code}

@@ -5,6 +5,20 @@ Definitions of:
  * pre category
  * category
 
+We follow the naming conventions of the HoTT Book.
+The properties of the different types of category
+are given in the table below.
+
+                ┌──────┬──────┬────────────┐
+                │ obj  │ hom  │ univalence │ 
+┌───────────────┼──────┼──────┼────────────┤
+│ wild-category │ type │ type │ no         │
+├───────────────┼──────┼──────┼────────────┤
+│ pre-category  │ type │ set  │ no         │
+├───────────────┼──────┼──────┼────────────┤
+│ category      │ type │ set  │ yes        │
+└───────────────┴──────┴──────┴────────────┘
+
 \begin{code}
 
 {-# OPTIONS --safe --without-K #-}
@@ -29,19 +43,19 @@ We start by defining the notion of a wild category.
 This consists of the usual components of a category,
 which is as follows:
 
-- A collection of objects, obj
-- For each pair of objects, A B : obj, a type of homorphism between A and B
-- For each object A : obj, an identity homorphism (id A) : hom A A
-- A composition operation, ∘, which for objects A B C : obj
+- A collection of objects, obj,
+- for each pair of objects, A B : obj, a type of homorphism between A and B,
+- for each object A : obj, an identity homorphism (id A) : hom A A, and
+- a composition operation, ∘, which for objects A B C : obj
   and homorphisms f : hom A B, g : hom B C gives a new homomorphism
-  g ∘ f : hom A C
+  g ∘ f : hom A C.
 
-with the following axioms
+Such that the following axioms hold:
 
-- left-id: For objects A B : obj and morphism f : hom A B, f ∘ (id A) ＝ f
-- right-id: For objects A B : obj and morphism f : hom A B, (id B) ∘ f ＝ f
-- associativity: For objects A B C D : obj and morphisms f : hom A B,
-                 g : hom B C, h : hom C D, we have h ∘ (g ∘ f) ＝ (h ∘ g) ∘ f
+- left-id, for objects A B : obj and morphism f : hom A B, f ∘ idA ＝ f,
+- right-id, for objects A B : obj and morphism f : hom A B, idB ∘ f ＝ f, and
+- associativity, for objects A B C D : obj and morphisms f : hom A B,
+                 g : hom B C, h : hom C D, we have h ∘ (g ∘ f) ＝ (h ∘ g) ∘ f.
 
 \begin{code}
 
@@ -66,93 +80,109 @@ record WildCategory (𝓤 𝓥 : Universe) : (𝓤 ⊔ 𝓥)⁺ ̇  where
 
 \end{code}
 
-We add instance argument versions of each field, apart from
-obj, which we make explicit. We also add a syntax definition
-for composition where the precategory cannot be inferred.
-
-\begin{code}
-
-open WildCategory {{...}} public hiding (obj)
-
-obj : (W : WildCategory 𝓤 𝓥) → 𝓤 ̇
-obj = WildCategory.obj
-
-wildcat-comp-explicit : (W : WildCategory 𝓤 𝓥)
-          {a b c : obj W}
-          → hom {{W}} b c
-          → hom {{W}} a b
-          → hom {{W}} a c
-wildcat-comp-explicit W g f = _∘_{{W}} g f
-
-syntax wildcat-comp-explicit P g f = g ∘⟨ P ⟩ f
-
-infixr 5 wildcat-comp-explicit
-
-wildcat-comp : {{W : WildCategory 𝓤 𝓥}}
-               {a b c : obj W}
-             → hom b c
-             → hom a b
-             → hom a c
-wildcat-comp g f = g ∘ f
-
-infixr 5 wildcat-comp
-
-\end{code}
-
 An isomorphism in a category consists of a homomorphism f : hom a b
-and some "inverse" homomorphism g : hom b a, such that g ∘ f = (id a)
-and f ∘ g ＝ (id b).
+and some "inverse" homomorphism g : hom b a, such that g ∘ f = id
+and f ∘ g ＝ id.
 
 We first define the property of being an isomorphism and then define
 the type of isomorphisms between objects of a wild category.
 
 \begin{code}
 
-is-iso : {{W : WildCategory 𝓤 𝓥}} {a b : obj W} (f : hom {{W}} a b) → 𝓥 ̇ 
-is-iso {{W}} {a} {b} f = Σ inv ꞉ hom b a , (inv ∘⟨ W ⟩ f ＝ id) × (f ∘⟨ W ⟩ inv ＝ id)
+ is-iso : {a b : obj} (f : hom a b) → 𝓥 ̇ 
+ is-iso {a} {b} f = Σ inv ꞉ hom b a , (inv ∘ f ＝ id) × (f ∘ inv ＝ id)
 
-inv : {{W : WildCategory 𝓤 𝓥}}
-      {a b : obj W}
-      {f : hom a b}
-    → is-iso f
-    → hom b a
-inv iso = pr₁ iso
+ inv : {a b : obj}
+       {f : hom a b}
+     → is-iso f
+     → hom b a
+ inv iso = pr₁ iso
 
-l-inv : {{W : WildCategory 𝓤 𝓥}}
-        {a b : obj W}
-        {f : hom a b}
-        (iso : is-iso f)
-      → inv iso ∘ f ＝ id 
-l-inv iso = pr₁ (pr₂ iso)
+ l-inv : {a b : obj}
+         {f : hom a b}
+         (iso : is-iso f)
+       → inv iso ∘ f ＝ id 
+ l-inv iso = pr₁ (pr₂ iso)
 
-r-inv : {{W : WildCategory 𝓤 𝓥 }}
-        {a b : obj W}
-        {f : hom a b}
-        (iso : is-iso f)
-      → f ∘⟨ W ⟩ inv iso ＝ id
-r-inv iso = pr₂ (pr₂ iso)
+ r-inv : {a b : obj}
+         {f : hom a b}
+         (iso : is-iso f)
+       → f ∘ inv iso ＝ id
+ r-inv iso = pr₂ (pr₂ iso)
 
-_≅_ : {{W : WildCategory 𝓤 𝓥}} (a b : obj W) → 𝓥 ̇
-a ≅ b = Σ f ꞉ hom a b , is-iso f
+ _≅_ : (a b : obj) → 𝓥 ̇
+ a ≅ b = Σ f ꞉ hom a b , is-iso f
 
-wildcat-iso-explicit : (W : WildCategory 𝓤 𝓥)
-              (a b : obj W)
-            → 𝓥 ̇
-wildcat-iso-explicit W a b = _≅_ {{W}} a b
+ iso : {a b : obj}
+     → a ≅ b
+     → hom a b
+ iso = pr₁
 
-syntax wildcat-iso-explicit W a b = a ≅⟨ W ⟩ b
+ isomorphism-proof : {a b : obj}
+                     (f : a ≅ b)
+                   → Σ g ꞉ hom b a , (g ∘ iso f ＝ id) × (iso f ∘ g ＝ id)
+ isomorphism-proof = pr₂
 
-iso : {{W : WildCategory 𝓤 𝓥}}
-      {a b : obj W}
-    → a ≅ b
-    → hom a b
-iso = pr₁
+\end{code}
 
-p-is-iso : {{W : WildCategory 𝓤 𝓥}}
-        {a b : obj W}
-        (f : a ≅ b)
-      → Σ g ꞉ hom b a , (g ∘ (iso f) ＝ id) × ((iso f) ∘ g ＝ id)
-p-is-iso = pr₂
+We can show that two inverses for a given isomorphism must be equal.
+
+\begin{code}
+
+ inverse-eq : {a b : obj}
+              {f : hom a b}
+              (x y : is-iso f)
+            → inv x ＝ inv y
+ inverse-eq {a} {b} {f} x y = inv x               ＝⟨ i ⟩
+                              inv x ∘ id          ＝⟨ ii ⟩
+                              inv x ∘ (f ∘ inv y) ＝⟨ iii ⟩
+                              (inv x ∘ f) ∘ inv y ＝⟨ iv ⟩
+                              id ∘ inv y          ＝⟨ v ⟩
+                              inv y               ∎
+  where
+   i   = (right-id (inv x))⁻¹
+   ii  = ap (inv x ∘_) (r-inv y)⁻¹
+   iii = assoc _ _ _
+   iv  = ap (_∘ inv y) (l-inv x)
+   v   = left-id (inv y)
+
+\end{code}
+
+We wish to combine the similar notions of equivalence,
+namely the internal equality: a ＝ b and isomorphisms a ≅ b.
+
+We can in fact show that if a ＝ b, then a ≅ b. This is because if
+a ＝ b, then by path induction we need to show that a ≅ a. This can
+easily be constructed as follows. This map is typically called id-to-iso
+
+\begin{code}
+
+ -- not sure why I have to add the implict argument here?
+ id-comp-id-is-id : {a : obj} → id ∘ id ＝ id {a}
+ id-comp-id-is-id = left-id id
+
+ id-to-iso : (a b : obj)
+           → a ＝ b
+           → a ≅ b
+ id-to-iso a b refl = id , id , id-comp-id-is-id , id-comp-id-is-id
+
+\end{code}
+
+To bring into alignment the two different forms of equality, we define a
+category to be a precategory where identification is equivalent to isomorphism.
+That is the above map is an equivalence.
+
+\begin{code}
+
+ is-category : (𝓤 ⊔ 𝓥) ̇ 
+ is-category = (a b : obj) → is-equiv (id-to-iso a b)
+
+ being-cat-is-prop : (fe : Fun-Ext)
+                   → is-prop (is-category)
+ being-cat-is-prop fe x y = Π₂-is-prop fe I _ _
+  where
+   I : (a b : obj) → is-prop (is-equiv (id-to-iso a b))
+   I a b = being-equiv-is-prop (λ x y → fe {x} {y}) (id-to-iso a b)
 
 \end{code}
 
@@ -162,18 +192,163 @@ shown to be a proposition.
 
 \begin{code}
 
-is-precategory : (W : WildCategory 𝓤 𝓥) → (𝓤 ⊔ 𝓥) ̇
-is-precategory W = (a b : obj W) → is-set (hom {{W}} a b)
+ is-precategory : (𝓤 ⊔ 𝓥) ̇
+ is-precategory = (a b : obj) → is-set (hom a b)
 
-being-precat-is-prop : (fe : Fun-Ext)
-                       (W : WildCategory 𝓤 𝓥)
-                     → is-prop (is-precategory W)
-being-precat-is-prop fe W p q = Π-is-prop fe
-                                 (λ a → Π-is-prop fe
-                                  (λ b → being-set-is-prop fe)) _ _
+ being-precat-is-prop : (fe : Fun-Ext)
+                      → is-prop (is-precategory)
+ being-precat-is-prop fe = Π₂-is-prop fe (λ _ _ → being-set-is-prop fe)
 
 Precategory : (𝓤 𝓥 : Universe) → (𝓤 ⊔ 𝓥)⁺ ̇
-Precategory 𝓤 𝓥 = Σ W ꞉ WildCategory 𝓤 𝓥 , is-precategory W
+Precategory 𝓤 𝓥 = Σ W ꞉ WildCategory 𝓤 𝓥 , WildCategory.is-precategory W
+
+\end{code}
+
+We add instance argument versions of each field, apart from
+obj, which we make explicit. We also add a syntax definition
+for composition where the precategory cannot be inferred.
+
+\begin{code}
+
+open WildCategory public using (is-precategory ; is-category)
+-- open WildCategory {{...}} public hiding (is-precategory ; is-category ; obj)
+
+record OBJ {𝓤} {𝓥} (A : 𝓤 ̇ ) (B : 𝓥 ̇ ) : 𝓤 ⊔ 𝓥 ⁺ ̇  where
+ field
+  obj : A → B
+
+open OBJ {{...}} public
+
+instance
+ wildcatobj : {𝓤 𝓥 : Universe} → OBJ (WildCategory 𝓤 𝓥) (𝓤 ̇ )
+ obj {{wildcatobj}} = WildCategory.obj
+ 
+instance
+ precatobj : {𝓤 𝓥 : Universe} → OBJ (Precategory 𝓤 𝓥) (𝓤 ̇ )
+ obj {{precatobj}} (P , _) = WildCategory.obj P
+
+\end{code}
+
+We defined notation for a wildcategory
+
+\begin{code}
+
+record Notation {𝓤 𝓥 : Universe} (W : WildCategory 𝓤 𝓥) : 𝓤 ⊔ (𝓥 ⁺) ̇ where
+ field
+  hom : obj W → obj W → 𝓥 ̇
+
+open Notation {{...}} public
+
+module _ {𝓤 𝓥 : Universe} (W : WildCategory 𝓤 𝓥) where
+ instance
+  thishom : Notation W
+  hom {{thishom}} = WildCategory.hom W
+
+  
+ record Notation' : 𝓤 ⊔ (𝓥 ⁺) ̇ where
+  field
+   id : {a : obj W} → hom a a
+
+ 
+ open Notation' {{...}} public
+
+module _ {𝓤 𝓥 : Universe} (W : WildCategory 𝓤 𝓥) where
+ instance
+  thishom' : Notation W
+  hom {{thishom'}} = WildCategory.hom W
+
+ instance
+  thisid : Notation' W
+  id {{thisid}} = WildCategory.id W
+
+ record Notation'' : 𝓤 ⊔ 𝓥 ̇  where
+  field
+   _∘_ : {a b c : obj W}
+       → hom b c
+       → hom a b
+       → hom a c
+
+ open Notation'' {{...}} public
+
+module _ {𝓤 𝓥 : Universe} (W : WildCategory 𝓤 𝓥) where
+ instance
+  thishom'' : Notation W
+  hom {{thishom''}} = WildCategory.hom W
+
+ instance
+  thisid' : Notation' W
+  id {{thisid'}} = WildCategory.id W
+
+ instance
+  comp : Notation'' W
+  _∘_ {{comp}} = WildCategory._∘_ W
+
+ record GenNotation : 𝓤 ⊔ (𝓥 ⁺) ̇  where
+  field
+   left-id : {a b : obj W} (f : hom a b)
+           → id ∘ f ＝ f
+   right-id : {a b : obj W} (f : hom a b)
+            → f ∘ id ＝ f
+   assoc : {a b c d : obj W}
+           (f : hom a b)
+           (g : hom b c)
+           (h : hom c d)
+         → h ∘ (g ∘ f) ＝ (h ∘ g) ∘ f
+   is-iso : {a b : obj W} (f : hom a b) → 𝓥 ̇ 
+   inv : {a b : obj W}
+         {f : hom a b}
+       → is-iso f
+       → hom b a
+   l-inv : {a b : obj W}
+           {f : hom a b}
+           (iso : is-iso f)
+         → inv iso ∘ f ＝ id
+   r-inv : {a b : obj W} {f : hom a b}
+           (iso : is-iso f)
+         → f ∘ inv iso ＝ id
+   inverse-eq : {a b : obj W} {f : hom a b}
+                (x y : is-iso f)
+              → inv x ＝ inv y
+   _≅_ : (a b : obj W) → 𝓥 ̇
+   iso : {a b : obj W}
+       → a ≅ b
+       → hom a b
+   isomorphism-proof : {a b : obj W}
+                       (f : a ≅ b)
+                     → Σ g ꞉ hom b a , (g ∘ iso f ＝ id) × (iso f ∘ g ＝ id)
+   id-to-iso : (a b : obj W)
+             → a ＝ b
+             → a ≅ b
+
+ open GenNotation {{...}} public
+
+module CategoryNotation {𝓤 𝓥 : Universe} (W : WildCategory 𝓤 𝓥) where
+ instance
+  wildcatnotationn : Notation W
+  hom {{wildcatnotationn}} = WildCategory.hom W
+
+ instance
+  wildcatnotation' : Notation' W
+  id {{wildcatnotation'}} = WildCategory.id W
+
+ instance
+  wildcatnotation'' : Notation'' W
+  _∘_ {{wildcatnotation''}} = WildCategory._∘_ W
+  
+ instance
+  wildcatnotation : GenNotation W
+  left-id {{wildcatnotation}} = WildCategory.left-id W
+  right-id {{wildcatnotation}} = WildCategory.right-id W
+  assoc {{wildcatnotation}} = WildCategory.assoc W
+  is-iso {{wildcatnotation}} = WildCategory.is-iso W
+  inv {{wildcatnotation}} = WildCategory.inv W
+  l-inv {{wildcatnotation}} = WildCategory.l-inv W
+  r-inv {{wildcatnotation}} = WildCategory.r-inv W
+  inverse-eq {{wildcatnotation}} = WildCategory.inverse-eq W
+  _≅_ {{wildcatnotation}} = WildCategory._≅_ W
+  iso {{wildcatnotation}} = WildCategory.iso W
+  isomorphism-proof {{wildcatnotation}} = WildCategory.isomorphism-proof W
+  id-to-iso {{wildcatnotation}} = WildCategory.id-to-iso W
 
 \end{code}
 
@@ -187,10 +362,10 @@ instance
    → Underlying-Type (Precategory 𝓤 𝓥) (WildCategory 𝓤 𝓥)
   ⟨_⟩ {{underlying-wildcategory-of-precategory}} (P , _) = P
 
-hom-is-set : {{P : Precategory 𝓤 𝓥}}
-             {a b : obj ⟨ P ⟩}
-           → is-set (hom {{⟨ P ⟩}} a b)
-hom-is-set {{_ , p}} {a} {b} = p a b
+hom-is-set : (P : Precategory 𝓤 𝓥)
+             {a b : obj P}
+           → is-set (WildCategory.hom ⟨ P ⟩ a b)
+hom-is-set (_ , p) {a} {b} = p a b
 
 \end{code}
 
@@ -202,43 +377,26 @@ right inverse equalities are a proposition.
 
 \begin{code}
 
-inv-is-lc : {{P : Precategory 𝓤 𝓥}}
-            {a b : obj ⟨ P ⟩}
-            {f : hom {{⟨ P ⟩}} a b}
-            (x y : is-iso {{⟨ P ⟩}} f)
-          → inv {{⟨ P ⟩}} x ＝ inv {{⟨ P ⟩}} y
-          → x ＝ y
-inv-is-lc {{P}} x y refl = ap₂ (λ l r → inv {{⟨ P ⟩}} x , l , r) l-eq r-eq
- where
-  l-eq : l-inv {{⟨ P ⟩}} x ＝ l-inv {{⟨ P ⟩}} y
-  l-eq = hom-is-set (l-inv {{⟨ P ⟩}} x) (l-inv {{⟨ P ⟩}} y)
+module _ {{P : Precategory 𝓤 𝓥}} where
+ open CategoryNotation ⟨ P ⟩
 
-  r-eq : r-inv {{⟨ P ⟩}} x ＝ r-inv {{⟨ P ⟩}} y
-  r-eq = hom-is-set (r-inv {{⟨ P ⟩}} x) (r-inv {{⟨ P ⟩}} y)
+ inv-is-lc : {a b : obj P}
+             {f : hom a b}
+             (x y : is-iso f)
+           → inv x ＝ inv y
+           → x ＝ y
+ inv-is-lc x y refl = ap₂ (λ l r → inv x , l , r) l-eq r-eq
+  where
+   l-eq : l-inv x ＝ l-inv y
+   l-eq = hom-is-set P (l-inv x) (l-inv y)
+ 
+   r-eq : r-inv x ＝ r-inv y
+   r-eq = hom-is-set P (r-inv x) (r-inv y)
 
-being-iso-is-prop : {{P : Precategory 𝓤 𝓥}}
-                    {a b : obj ⟨ P ⟩}
-                    (f : hom {{⟨ P ⟩}} a b)
-                  → is-prop (is-iso {{⟨ P ⟩}} f)
-being-iso-is-prop {{P}} {a} {b} f x y = inv-is-lc x y (inverse-eq {{⟨ P ⟩}} x y)
- where  
-  inverse-eq : {{W : WildCategory _ _}}
-               {a b : obj W}
-               {f : hom a b}
-               (x y : is-iso f)
-             → inv x ＝ inv y
-  inverse-eq {{W}} {a} {b} {f} x y = inv x               ＝⟨ i ⟩
-                                     inv x ∘ id          ＝⟨ ii ⟩
-                                     inv x ∘ (f ∘ inv y) ＝⟨ iii ⟩
-                                     (inv x ∘ f) ∘ inv y ＝⟨ iv ⟩
-                                     id ∘ inv y          ＝⟨ v ⟩
-                                     inv y               ∎
-   where
-    i   = (right-id (inv x))⁻¹
-    ii  = ap (λ - → inv x ∘ -) (r-inv y)⁻¹
-    iii = assoc _ _ _
-    iv  = ap (λ - → - ∘ inv y) (l-inv x)
-    v   = left-id (inv y)
+ being-iso-is-prop : {a b : obj ⟨ P ⟩}
+                     (f : hom a b)
+                   → is-prop (is-iso f)
+ being-iso-is-prop f x y = inv-is-lc x y (inverse-eq x y)
 
 \end{code}
 
@@ -246,54 +404,19 @@ Following this, we can see that the type of isomorphisms is a set.
 
 \begin{code}
 
-isomorphism-type-is-set : {{P : Precategory 𝓤 𝓥}}
-                          {a b : obj ⟨ P ⟩}
-                        → is-set (a ≅⟨ ⟨ P ⟩ ⟩ b)
-isomorphism-type-is-set {{P}} = Σ-is-set hom-is-set
-                                 (λ f → props-are-sets (being-iso-is-prop f))
+ isomorphism-type-is-set : {a b : obj ⟨ P ⟩}
+                         → is-set (a ≅ b)
+ isomorphism-type-is-set = Σ-is-set (hom-is-set P)
+                                    (λ f → props-are-sets (being-iso-is-prop f))
 
 \end{code}
 
-We wish to combine the similar notions of equivalence,
-namely the internal equality: a ＝ b and isomorphisms a ≅ b.
-
-We can in fact show that if a ＝ b, then a ≅ b. This is because if
-a ＝ b, then by path induction we need to show that a ≅ a. This can
-easily be constructed as follows. This map is typically called id-to-iso
+A category is exactly a univalent precategory.
 
 \begin{code}
-
-id-to-iso : {{ W : WildCategory 𝓤 𝓥 }}
-            (a b : obj W )
-          → a ＝ b
-          → a ≅⟨ W ⟩ b
-id-to-iso a b refl = id , (id , id-comp-id-is-id , id-comp-id-is-id)
- where
-  id-comp-id-is-id : id ∘ id ＝ id
-  id-comp-id-is-id = left-id id
-
-\end{code}
-
-To bring into alignment the two different forms of equality, we define a
-category to be a precategory where identification is equivalent to isomorphism.
-That is the above map is an equivalence.
-
-\begin{code}
-
-is-category : (P : Precategory 𝓤 𝓥) → (𝓤 ⊔ 𝓥) ̇ 
-is-category P = (a b : obj ⟨ P ⟩) → is-equiv (id-to-iso {{⟨ P ⟩}} a b)
-
-being-cat-is-prop : (fe : Fun-Ext)
-                    (P : Precategory 𝓤 𝓥)
-                  → is-prop (is-category P)
-being-cat-is-prop fe P x y = Π₂-is-prop fe I _ _
- where
-  I : (a b : obj ⟨ P ⟩) → is-prop (is-equiv (id-to-iso {{⟨ P ⟩}} a b))
-  I a b e e' = being-equiv-is-prop (λ x y → fe {x} {y})
-                                      (id-to-iso {{⟨ P ⟩}} a b) e e'
 
 Category : (𝓤 𝓥 : Universe) → (𝓤 ⊔ 𝓥 )⁺ ̇
-Category 𝓤 𝓥 = Σ P ꞉ Precategory 𝓤 𝓥 , is-category P
+Category 𝓤 𝓥 = Σ P ꞉ Precategory 𝓤 𝓥 , is-category ⟨ P ⟩
 
 \end{code}
 
@@ -313,10 +436,13 @@ instance
    → Underlying-Type (Category 𝓤 𝓥) (WildCategory 𝓤 𝓥)
   ⟨_⟩ {{underlying-wildcategory-of-category}} ((W , _) , _) = W
 
+instance
+ catobj : {𝓤 𝓥 : Universe} → OBJ (Category 𝓤 𝓥) (𝓤 ̇ )
+ obj {{catobj}} ((C , _) , _) = WildCategory.obj C
 
 id-to-iso-is-equiv : (C : Category 𝓤 𝓥)
                    → is-category ⟨ C ⟩
-id-to-iso-is-equiv C = pr₂ C
+id-to-iso-is-equiv = pr₂
 
 \end{code}
 
@@ -326,11 +452,13 @@ forms a set.
 
 \begin{code}
 
-cat-objs-are-1-types : (A : Category 𝓤 𝓥) → (a b : obj ⟨ A ⟩) → is-set (a ＝ b)
+cat-objs-are-1-types : (A : Category 𝓤 𝓥) → (a b : obj A) → is-set (a ＝ b)
 cat-objs-are-1-types A a b = equiv-to-set id-equiv-iso
                                           (isomorphism-type-is-set {{⟨ A ⟩}})
  where
-  id-equiv-iso : (a ＝ b) ≃ (a ≅⟨ ⟨ A ⟩ ⟩ b)
-  id-equiv-iso = id-to-iso {{⟨ A ⟩}} a b , id-to-iso-is-equiv A a b
+  open CategoryNotation ⟨ A ⟩
+  id-equiv-iso : (a ＝ b) ≃ a ≅ b
+  id-equiv-iso = id-to-iso a b , id-to-iso-is-equiv A a b
 
 \end{code}
+

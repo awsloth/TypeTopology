@@ -9,7 +9,7 @@ Univalence for Set based structures
 open import Categories.Type renaming (id to c-id)
 open import MLTT.Spartan hiding (_∘_)
 open import UF.Base
-open import UF.Equiv hiding (_≅⟨_⟩_)
+open import UF.Equiv hiding (_≅_)
 open import UF.FunExt
 open import UF.Retracts
 open import UF.Sets
@@ -92,6 +92,8 @@ module _ {S : 𝓤 ̇  → 𝓥 ̇ }
                             (λ f → to-Σ-＝ (refl , right-id-prop f))
                             λ f g h → to-Σ-＝ (refl , assoc-prop f g h)
 
+ open CategoryNotation gen-wildcat
+
  gen-precat : Precategory ((𝓤 ⁺) ⊔ 𝓥) (𝓤 ⊔ 𝓦)
  gen-precat = gen-wildcat , λ a b → Σ-is-set (Π-is-set fe (λ _ → underlying-is-set b)) (λ f → props-are-sets (P-is-prop a b f))
 
@@ -126,30 +128,30 @@ module _ {S : 𝓤 ̇  → 𝓥 ̇ }
    θ = canonical-map-equiv-criterion' ι ρ h
 
  sns-equiv-iso : (A B : Σ S)
-               → (A ≃[ gen-sns-data ] B) ≃ (A ≅⟨ gen-wildcat ⟩ B)
+               → (A ≃[ gen-sns-data ] B) ≃ (A ≅ B)
  sns-equiv-iso A B = toiso , (fromiso , left) , (fromiso , right)
   where
-   toiso : (A ≃[ gen-sns-data ] B) → (A ≅⟨ gen-wildcat ⟩ B)
+   toiso : (A ≃[ gen-sns-data ] B) → (A ≅ B)
    toiso (f , e@((g , gp) , (g' , gp')) , fp)
           = (f , fp)
           , (g , inv-is-hom A B f e fp)
           , to-subtype-＝ (λ iden → P-is-prop A A iden) (inverse _ (fe _ _) (inverses-are-retractions f e))
           , to-subtype-＝ (λ iden → P-is-prop B B iden) (inverse _ (fe _ _) gp)
 
-   fromiso : (A ≅⟨ gen-wildcat ⟩ B) → (A ≃[ gen-sns-data ] B)
+   fromiso : (A ≅ B) → (A ≃[ gen-sns-data ] B)
    fromiso ((f , fp) , (g , gp) , lg , rg) = f
                                            , ((g , λ x → ap (λ - → - x) (ap pr₁ rg)) , (g , λ x → ap (λ - → - x) (ap pr₁ lg)))
                                            , fp
 
    left : (λ x → toiso (fromiso x)) ∼ (λ x → x)
-   left ((f , fp) , (g , gp) , lg , rg) = to-Σ-＝ (refl , (to-Σ-＝ (to-Σ-＝ (refl , P-is-prop B A g _ _) , (to-×-＝ (hom-is-set {{gen-precat}} _ lg) (hom-is-set {{gen-precat}} _ rg)))))
+   left ((f , fp) , (g , gp) , lg , rg) = to-Σ-＝ (refl , (to-Σ-＝ (to-Σ-＝ (refl , P-is-prop B A g _ _) , (to-×-＝ (hom-is-set gen-precat _ lg) (hom-is-set gen-precat _ rg)))))
 
    right : (λ x → fromiso (toiso x)) ∼ (λ x → x)
    right (f , e@((g , gp) , (g' , gp')) , fp) = to-Σ-＝ (refl , to-×-＝ (to-×-＝ (to-subtype-＝ (λ h → Π-is-prop fe λ x a b → underlying-is-set B _ _) refl) (to-subtype-＝ (λ h → Π-is-prop fe λ x a b → underlying-is-set A _ _) (inv-eq e))) refl)
 
 
  characterization-of-gen-＝ : (A B : Σ S)
-                            → (A ＝ B) ≃ (A ≅⟨ gen-wildcat ⟩ B)
+                            → (A ＝ B) ≃ (A ≅ B)
  characterization-of-gen-＝ A B = ≃-comp
                                   (characterization-of-＝ ua gen-sns-data A B)
                                   (sns-equiv-iso A B)
@@ -158,15 +160,15 @@ module _ {S : 𝓤 ̇  → 𝓥 ̇ }
  gen-category = gen-precat , is-cat
   where
    eq : (a b : Σ S)
-      → id-to-iso {{gen-wildcat}} a b
+      → id-to-iso a b
       ∼ ⌜ characterization-of-gen-＝ a b ⌝
    eq a b refl = to-Σ-＝ (refl , is-iso-equality)
     where
-     inverse-eq = to-subtype-＝ (P-is-prop a a) refl
-     left-inv = hom-is-set {{gen-precat}} {a} {a} _ _
-     right-inv = hom-is-set {{gen-precat}} {a} {a} _ _
-     is-iso-equality = to-Σ-＝ (inverse-eq , to-×-＝ left-inv right-inv)
+     inv-eq' = to-subtype-＝ (P-is-prop a a) refl
+     left-inv = hom-is-set gen-precat {a} {a} _ _
+     right-inv = hom-is-set gen-precat {a} {a} _ _
+     is-iso-equality = to-Σ-＝ (inv-eq' , to-×-＝ left-inv right-inv)
 
-   is-cat : is-category gen-precat
-   is-cat a b = equiv-closed-under-∼ ⌜ characterization-of-gen-＝ a b ⌝ (id-to-iso {{gen-wildcat}} a b) (pr₂ (characterization-of-gen-＝ a b)) (eq a b)
+   is-cat : is-category gen-wildcat
+   is-cat a b = equiv-closed-under-∼ ⌜ characterization-of-gen-＝ a b ⌝ (id-to-iso a b) (pr₂ (characterization-of-gen-＝ a b)) (eq a b)
    
