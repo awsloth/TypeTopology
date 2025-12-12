@@ -58,7 +58,10 @@ record DisplayedPrecategory (𝓦 𝓣 : Universe)
        → hom[ g ∘ f ] x z
 
  private
-  hom[-] : {a b : obj C} (x : obj[ a ]) (y : obj[ b ]) → hom a b → 𝓣 ̇
+  hom[-] : {a b : obj C}
+           (x : obj[ a ])
+           (y : obj[ b ])
+         → hom a b → 𝓣 ̇
   hom[-] x y = λ - → hom[ - ] x y
 
  field
@@ -87,7 +90,9 @@ record DisplayedPrecategory (𝓦 𝓣 : Universe)
               {f : hom[ f' ] x y}
               {g : hom[ g' ] y z}
               {h : hom[ h' ] z w}
-            → h ∘' (g ∘' f) ＝⟦ hom[-] x w , assoc f' g' h' ⟧ (h ∘' g) ∘' f
+            → h ∘' (g ∘' f)
+            ＝⟦ hom[-] x w , assoc f' g' h' ⟧
+              (h ∘' g) ∘' f
 
 \end{code}
 
@@ -209,14 +214,18 @@ module _ {𝓤 𝓥 : Universe}
                   {x : obj[ a ]}
                   {y : obj[ b ]}
                   (f : hom[ f' ] x y)
-                → f ∘' disp-id ＝⟦ (λ - → hom[ - ] x y) , right-id f' ⟧ f
+                → f ∘' disp-id
+                ＝⟦ (λ - → hom[ - ] x y) , right-id f' ⟧
+                  f
 
    cmp-left-id : {a b : obj P}
                  {f' : hom a b}
                  {x : obj[ a ]}
                  {y : obj[ b ]}
                  (f : hom[ f' ] x y)
-               → disp-id ∘' f ＝⟦ (λ - → hom[ - ] x y) , left-id f' ⟧ f
+               → disp-id ∘' f
+               ＝⟦ (λ - → hom[ - ] x y) , left-id f' ⟧
+                 f
   
    cmp-assoc : {a b c d : obj P}
                {f' : hom a b}
@@ -232,6 +241,7 @@ module _ {𝓤 𝓥 : Universe}
              → h ∘' (g ∘' f)
              ＝⟦ (λ - → hom[ - ] x w) , assoc f' g' h' ⟧
                (h ∘' g) ∘' f
+
 
 \end{code}
 
@@ -311,14 +321,41 @@ DisplayedCategory 𝓤 𝓥 P = Σ D ꞉ DisplayedPrecategory 𝓤 𝓥 P , is-d
 
 \end{code}
 
-begin{code}
+\begin{code}
 
 TotalCategory : {𝓦 𝓨 : Universe}
-                {P : Precategory 𝓤 𝓥}
-                (D : DisplayedCategory 𝓦 𝓨 P)
+                {C : Category 𝓤 𝓥}
+                (D : DisplayedCategory 𝓦 𝓨 ⟨ C ⟩)
               → Category (𝓤 ⊔ 𝓦) (𝓥 ⊔ 𝓨)
-TotalCategory (D , is-disp) = TotalPrecategory D , is-cat
+TotalCategory {_} {_} {_} {_} {C} (D , is-disp) = TotalPrecategory D , is-cat
  where
+  open CategoryNotation ⟨ C ⟩
+  open DisplayedNotation D
+
+  TC = TotalPrecategory D
+
+  open CategoryNotation ⟨ TC ⟩
+
   is-cat : is-category ⟨ TotalPrecategory D ⟩
-  is-cat = {!!}
+  is-cat (a , x) (b , y) = (iso-to-id , {!!}) , (iso-to-id , {!!})
+   where
+    fst-iso : {a b : obj C}
+              {x : obj[ a ]}
+              {y : obj[ b ]}
+            → (a , x) ≅ (b , y)
+            → a ≅ b
+    fst-iso ((f , _) , (g , _) , lg , rg) = f , g , ({!!} , {!!})
+
+    snd-iso : {a b : obj C} {x : obj[ a ]} {y : obj[ b ]}
+            → (i : (a , x) ≅ (b , y))
+            → (DisplayedPrecategory._≅[_]_ D x (fst-iso i) y)
+    snd-iso ((f , f') , (g , g') , lg , rg) = {!!} , {!!}
+
+    h : (a , x) ≅ (b , y) → (e : a ＝ b) → transport obj[_] e x ＝ y
+    h iso refl = inverse _ (is-disp refl x y) {!snd-iso iso!}
+
+    iso-to-id : (a , x) ≅ (b , y)
+              → a , x ＝ b , y
+    iso-to-id iso = to-Σ-＝ (inverse _ (id-to-iso-is-equiv C a b) (fst-iso iso) , h iso (inverse _ (id-to-iso-is-equiv C a b) (fst-iso iso)))
+    
 \end{code}
