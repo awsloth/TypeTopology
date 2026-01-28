@@ -16,6 +16,14 @@ open import Categories.Type
 open import Categories.Functor
 open import Categories.DisplayedCategories.Type
 
+\end{code}
+
+We define displayed functors analagously to functors, but like displayed
+precategories we work with some "base" functor, with which we map between the
+base precategories which lie below the displayed precategories.
+
+\begin{code}
+
 record DisplayedFunctor {C : Precategory 𝓦 𝓣}
                         {C' : Precategory 𝓦' 𝓣'}
                         (F' : Functor ⟨ C ⟩ ⟨ C' ⟩)
@@ -39,7 +47,7 @@ record DisplayedFunctor {C : Precategory 𝓦 𝓣}
   id-map-pres : {c : obj C}
                 {a : obj[ c ]}
               → hom-map disp-id
-              ＝⟦ (λ - → hom[ - ] (obj-map a) (obj-map a)) , id-pres c ⟧
+              ＝⟦ (λ - → hom[ - ] (obj-map a) (obj-map a)) , id-preserved c ⟧
                 disp-id
   map-distrib : {a b c : obj ⟨ C ⟩}
                 {x : obj[ a ]}
@@ -49,6 +57,6 @@ record DisplayedFunctor {C : Precategory 𝓦 𝓣}
                 {g' : hom b c}
                 {f : hom[ f' ] x y}
                 {g : hom[ g' ] y z}
-              → hom-map (g ∘' f) ＝⟦ (λ - → hom[ - ] _ _) , distrib g' f' ⟧ hom-map g ∘' hom-map f
+              → hom-map (g ∘' f) ＝⟦ (λ - → hom[ - ] _ _) , distributes g' f' ⟧ hom-map g ∘' hom-map f
 
 \end{code}

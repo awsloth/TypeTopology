@@ -20,34 +20,34 @@ open import Categories.Type
 
 \end{code}
 
-We first define the notion of a displayed category. This is
-exactly a category D and a functor F : D → C. Which satisfies
-the usual structure of a category.
+We first define the notion of a displayed precategory. The objects and homs of
+this are indexed by a given base precategory. We then derive the other parts of
+a precategory, including the usual axioms which now have dependent equalities.
 
 \begin{code}
 
 record DisplayedPrecategory (𝓦 𝓣 : Universe)
-                            (C : Precategory 𝓤 𝓥)
+                            (P : Precategory 𝓤 𝓥)
                           : ((𝓦 ⊔ 𝓣) ⊔ (𝓤 ⊔ 𝓥))⁺ ̇  where
- open CategoryNotation ⟨ C ⟩
+ open CategoryNotation ⟨ P ⟩
  field
-  obj[_] : (c : obj C) → 𝓦 ̇
-  hom[_] : {a b : obj C}
+  obj[_] : (c : obj P) → 𝓦 ̇
+  hom[_] : {a b : obj P}
            (f : hom a b)
            (x : obj[ a ])
            (y : obj[ b ])
          → 𝓣 ̇
-  hom[-]-is-set : {a b : obj C}
+  hom[-]-is-set : {a b : obj P}
                   {f : hom a b}
                   {x : obj[ a ]}
                   {y : obj[ b ]}
                 → is-set (hom[ f ] x y)
   
-  disp-id : {c : obj C}
+  disp-id : {c : obj P}
             {x : obj[ c ]}
           → hom[ id ] x x
 
-  _∘'_ : {a b c : obj ⟨ C ⟩}
+  _∘'_ : {a b c : obj P}
          {g : hom b c}
          {f : hom a b}
          {x : obj[ a ]}
@@ -58,28 +58,28 @@ record DisplayedPrecategory (𝓦 𝓣 : Universe)
        → hom[ g ∘ f ] x z
 
  private
-  hom[-] : {a b : obj C}
+  hom[-] : {a b : obj P}
            (x : obj[ a ])
            (y : obj[ b ])
          → hom a b → 𝓣 ̇
   hom[-] x y = λ - → hom[ - ] x y
 
  field
-  cmp-right-id : {a b : obj ⟨ C ⟩}
+  cmp-right-id : {a b : obj P}
                  {f' : hom a b}
                  {x : obj[ a ]}
                  {y : obj[ b ]}
                  (f : hom[ f' ] x y)
                → f ∘' disp-id ＝⟦ hom[-] x y , right-id f' ⟧ f
 
-  cmp-left-id : {a b : obj ⟨ C ⟩}
+  cmp-left-id : {a b : obj P}
                 {f' : hom a b}
                 {x : obj[ a ]}
                 {y : obj[ b ]}
                 (f : hom[ f' ] x y)
               → disp-id ∘' f ＝⟦ hom[-] x y , left-id f' ⟧ f
   
-  cmp-assoc : {a b c d : obj ⟨ C ⟩}
+  cmp-assoc : {a b c d : obj P}
               {f' : hom a b}
               {g' : hom b c}
               {h' : hom c d}
@@ -96,28 +96,37 @@ record DisplayedPrecategory (𝓦 𝓣 : Universe)
 
 \end{code}
 
-Displayed Isomorphism
+We can now define a displayed version of isomorphism between objects.
 
 \begin{code}
 
- d-is-iso : {c c' : obj C}
+ is-iso-disp : {c c' : obj P}
             {d : obj[ c ]}
             {d' : obj[ c' ]}
             (isom : c ≅ c')
             (f : hom[ iso isom ] d d')
           → 𝓣 ̇
- d-is-iso {c} {c'} {d} {d'} isom f = Σ g ꞉ hom[ inv (isomorphism-proof isom) ] d' d
-                                        , ((g ∘' f ＝⟦ hom[-] d d , l-inv (isomorphism-proof isom) ⟧ disp-id)
-                                          × (f ∘' g ＝⟦ hom[-] d' d' , r-inv (isomorphism-proof isom) ⟧ disp-id))
+ is-iso-disp {c} {c'} {d} {d'} isom f
+   = Σ g ꞉ hom[ inv (isomorphism-proof isom) ] d' d
+     , ((g ∘' f ＝⟦ hom[-] d d , l-inv (isomorphism-proof isom) ⟧ disp-id)
+       × (f ∘' g ＝⟦ hom[-] d' d' , r-inv (isomorphism-proof isom) ⟧ disp-id))
 
- _≅[_]_ : {c c' : obj ⟨ C ⟩}
+ _≅[_]_ : {c c' : obj P}
           (d : obj[ c ])
           (iso : c ≅ c')
           (d' : obj[ c' ])
         → 𝓣 ̇
- d ≅[ iso ] d' = Σ f ꞉ hom[ pr₁ iso ] d d' , d-is-iso iso f
+ d ≅[ iso ] d' = Σ f ꞉ hom[ pr₁ iso ] d d' , is-iso-disp iso f
        
- id-to-iso-disp : {c c' : obj ⟨ C ⟩}
+\end{code}
+
+Following the definition of isomorphism, as with categories we can now define
+the notion of id-to-iso for displayed precategories and thus define displayed
+categories.
+
+\begin{code}
+
+ id-to-iso-disp : {c c' : obj P}
                   (e : c ＝ c')
                   (d : obj[ c ])
                   (d' : obj[ c' ])
@@ -129,7 +138,7 @@ Displayed Isomorphism
    h = cmp-left-id disp-id
 
  is-disp-category : (𝓤 ⊔ 𝓦 ⊔ 𝓣) ̇
- is-disp-category = {c c' : obj C}
+ is-disp-category = {c c' : obj P}
                     (e : c ＝ c')
                     (d : obj[ c ])
                     (d' : obj[ c' ])
@@ -137,7 +146,8 @@ Displayed Isomorphism
 
 \end{code}
 
-We defined notation for a displayed category
+We now define some notation for displayed precategories similarly to that of
+wild categories.
 
 \begin{code}
 
@@ -158,8 +168,8 @@ module _ {𝓤 𝓥 : Universe}
  open CategoryNotation ⟨ P ⟩
 
  instance
-  mod1 : DOBJ D
-  obj[_] {{mod1}} = DisplayedPrecategory.obj[_] D
+  d-obj-m : DOBJ D
+  obj[_] {{d-obj-m}} = DisplayedPrecategory.obj[_] D
 
  record DHOM  : ((𝓦 ⊔ 𝓣) ⊔ (𝓤 ⊔ 𝓥))⁺ ̇  where
   field
@@ -168,8 +178,8 @@ module _ {𝓤 𝓥 : Universe}
  open DHOM {{...}} public
 
  instance
-  mod2 : DHOM
-  hom[_] {{mod2}} = DisplayedPrecategory.hom[_] D
+  d-hom-m : DHOM
+  hom[_] {{d-hom-m}} = DisplayedPrecategory.hom[_] D
 
  record DCOMP : ((𝓦 ⊔ 𝓣) ⊔ (𝓤 ⊔ 𝓥))⁺ ̇  where
   field
@@ -194,13 +204,13 @@ module _ {𝓤 𝓥 : Universe}
  open DID {{...}} public
 
  instance
-  mod3 : DCOMP
-  _∘'_ {{mod3}} = DisplayedPrecategory._∘'_ D
+  dcomp-m : DCOMP
+  _∘'_ {{dcomp-m}} = DisplayedPrecategory._∘'_ D
 
 
  instance
-  mod4 : DID
-  disp-id {{mod4}} = DisplayedPrecategory.disp-id D
+  d-id-m : DID
+  disp-id {{d-id-m}} = DisplayedPrecategory.disp-id D
 
  record DNotation : ((𝓦 ⊔ 𝓣) ⊔ (𝓤 ⊔ 𝓥))⁺ ̇  where
   field
@@ -242,42 +252,50 @@ module _ {𝓤 𝓥 : Universe}
              ＝⟦ (λ - → hom[ - ] x w) , assoc f' g' h' ⟧
                (h ∘' g) ∘' f
 
+   is-iso-disp : {c c' : obj P}
+            {d : obj[ c ]}
+            {d' : obj[ c' ]}
+            (isom : c ≅ c')
+            (f : hom[ iso isom ] d d')
+          → 𝓥 ̇
+   _≅[_]_ : {c c' : obj P}
+            (d : obj[ c ])
+            (iso : c ≅ c')
+            (d' : obj[ c' ])
+          → 𝓥 ̇
 
-\end{code}
-
-
-\begin{code}
- 
  open DNotation {{...}} public
 
 
-module DisplayedNotation {𝓤 𝓥 : Universe}
+module DisplayedNotation {𝓦 𝓣 : Universe}
                          {P : Precategory 𝓦 𝓣}
                          (D : DisplayedPrecategory 𝓤 𝓥 P) where
  instance
-  tets : DOBJ D
-  obj[_] {{tets}} = DisplayedPrecategory.obj[_] D
+  d-obj : DOBJ D
+  obj[_] {{d-obj}} = DisplayedPrecategory.obj[_] D
   
 
  instance
-  tets' : DHOM D
-  hom[_] {{tets'}} = DisplayedPrecategory.hom[_] D
+  d-hom : DHOM D
+  hom[_] {{d-hom}} = DisplayedPrecategory.hom[_] D
 
  instance
-  tets'' : DID D
-  disp-id {{tets''}} = DisplayedPrecategory.disp-id D
+  d-id : DID D
+  disp-id {{d-id}} = DisplayedPrecategory.disp-id D
 
  instance
-  tets''' : DCOMP D
-  _∘'_ {{tets'''}} = DisplayedPrecategory._∘'_ D
+  d-comp : DCOMP D
+  _∘'_ {{d-comp}} = DisplayedPrecategory._∘'_ D
 
 
  instance
-  tets''''' : DNotation D
-  hom[-]-is-set {{tets'''''}} = DisplayedPrecategory.hom[-]-is-set D
-  cmp-right-id {{tets'''''}} = DisplayedPrecategory.cmp-right-id D
-  cmp-left-id {{tets'''''}} = DisplayedPrecategory.cmp-left-id D
-  cmp-assoc {{tets'''''}} = DisplayedPrecategory.cmp-assoc D
+  d-notation : DNotation D
+  hom[-]-is-set {{d-notation}} = DisplayedPrecategory.hom[-]-is-set D
+  cmp-right-id {{d-notation}} = DisplayedPrecategory.cmp-right-id D
+  cmp-left-id {{d-notation}} = DisplayedPrecategory.cmp-left-id D
+  cmp-assoc {{d-notation}} = DisplayedPrecategory.cmp-assoc D
+  is-iso-disp {{d-notation}} = DisplayedPrecategory.is-iso-disp D
+  _≅[_]_ {{d-notation}} = DisplayedPrecategory._≅[_]_ D
 
 \end{code}
 
@@ -298,13 +316,15 @@ TotalPrecategory {𝓤} {𝓥} {𝓦} {𝓨} {C} D = (wildcategory , total-is-pr
   wildcategory = wildcat-make (Σ c ꞉ obj C , obj[ c ])
                               (λ (a , x) (b , y) → Σ f ꞉ hom a b , hom[ f ] x y)
                               (id , disp-id)
-                              (λ (g' , g) (f' , f) → (g' ∘ f') , g ∘' f)
+                              (λ (g' , g) (f' , f) → g' ∘ f' , g ∘' f)
                               (λ (f' , f) → to-Σ-＝ (left-id f'
-                                                    , (Idtofun (dependent-Id-via-transport _ _)) (cmp-left-id f)))
-                              ((λ (f' , f) → to-Σ-＝ (right-id f'
-                                                     , (Idtofun (dependent-Id-via-transport _ _)) (cmp-right-id f))))
-                              (λ f g h → to-Σ-＝ ((assoc _ _ _)
-                                                 , (Idtofun (dependent-Id-via-transport _ _) cmp-assoc)))
+                                          , Idtofun (did _ _) (cmp-left-id f)))
+                              (λ (f' , f) → to-Σ-＝ (right-id f'
+                                          , Idtofun (did _ _) (cmp-right-id f)))
+                              (λ f g h → to-Σ-＝ (assoc _ _ _
+                                       , Idtofun (did _ _) cmp-assoc))
+   where
+    did = dependent-Id-via-transport
 
   total-is-precategory : is-precategory wildcategory
   total-is-precategory _ _ = Σ-is-set (hom-is-set C) (λ _ → hom[-]-is-set)
@@ -316,46 +336,10 @@ such that following map, id-to-iso-disp is an eqivalence.
 
 \begin{code}
 
-DisplayedCategory : (𝓤 𝓥 : Universe) {𝓦 𝓣 : Universe} (P : Precategory 𝓦 𝓣) → (𝓤 ⊔ 𝓥 ⊔ 𝓦 ⊔ 𝓣) ⁺ ̇
+DisplayedCategory : (𝓤 𝓥 : Universe)
+                    {𝓦 𝓣 : Universe}
+                    (P : Precategory 𝓦 𝓣)
+                  → (𝓤 ⊔ 𝓥 ⊔ 𝓦 ⊔ 𝓣) ⁺ ̇
 DisplayedCategory 𝓤 𝓥 P = Σ D ꞉ DisplayedPrecategory 𝓤 𝓥 P , is-disp-category D
 
-\end{code}
-
-\begin{code}
-
-TotalCategory : {𝓦 𝓨 : Universe}
-                {C : Category 𝓤 𝓥}
-                (D : DisplayedCategory 𝓦 𝓨 ⟨ C ⟩)
-              → Category (𝓤 ⊔ 𝓦) (𝓥 ⊔ 𝓨)
-TotalCategory {_} {_} {_} {_} {C} (D , is-disp) = TotalPrecategory D , is-cat
- where
-  open CategoryNotation ⟨ C ⟩
-  open DisplayedNotation D
-
-  TC = TotalPrecategory D
-
-  open CategoryNotation ⟨ TC ⟩
-
-  is-cat : is-category ⟨ TotalPrecategory D ⟩
-  is-cat (a , x) (b , y) = (iso-to-id , {!!}) , (iso-to-id , {!!})
-   where
-    fst-iso : {a b : obj C}
-              {x : obj[ a ]}
-              {y : obj[ b ]}
-            → (a , x) ≅ (b , y)
-            → a ≅ b
-    fst-iso ((f , _) , (g , _) , lg , rg) = f , g , ({!!} , {!!})
-
-    snd-iso : {a b : obj C} {x : obj[ a ]} {y : obj[ b ]}
-            → (i : (a , x) ≅ (b , y))
-            → (DisplayedPrecategory._≅[_]_ D x (fst-iso i) y)
-    snd-iso ((f , f') , (g , g') , lg , rg) = {!!} , {!!}
-
-    h : (a , x) ≅ (b , y) → (e : a ＝ b) → transport obj[_] e x ＝ y
-    h iso refl = inverse _ (is-disp refl x y) {!snd-iso iso!}
-
-    iso-to-id : (a , x) ≅ (b , y)
-              → a , x ＝ b , y
-    iso-to-id iso = to-Σ-＝ (inverse _ (id-to-iso-is-equiv C a b) (fst-iso iso) , h iso (inverse _ (id-to-iso-is-equiv C a b) (fst-iso iso)))
-    
 \end{code}
