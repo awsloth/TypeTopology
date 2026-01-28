@@ -14,14 +14,14 @@ open import Categories.Type
 
 \end{code}
 
-We define a functor from precategory A to precategory B as is usual.
-This includes:
-- Fobj, which is a map from objects of A to objects of B
-- Fhom, which is a map from homomorphisms of A to homomorphisms of B
+We define a functor from precategory A to precategory B as is usual. This
+includes,
+* Fobj, a map from objects of A to objects of B, and
+* Fhom, a map from homomorphisms of A to homomorphisms of B.
 
-with the following structure
-- Fhom (id A) = id (Fobj B)
-- Fhom (g ∘ f) = (Fhom g) ∘ (Fhom f)
+With the following structure
+* Fhom id = id, and
+* Fhom (g ∘ f) = Fhom g ∘ Fhom f.
 
 \begin{code}
 
@@ -33,38 +33,41 @@ record Functor (A : WildCategory 𝓤 𝓥) (B : WildCategory 𝓦 𝓣)
  field
   Fobj : obj A → obj B
   Fhom : {a b : obj A} → hom a b → hom (Fobj a) (Fobj b)
-  id-pres : (a : obj A) → Fhom {a} id ＝ id
-  distrib : {a b c : obj A}
-          (g : hom b c)
-          (f : hom a b)
-        → Fhom (g ∘ f) ＝ (Fhom g) ∘ (Fhom f)
+  id-preserved : (a : obj A) → Fhom {a} id ＝ id
+  distributes : {a b c : obj A}
+                (g : hom b c)
+                (f : hom a b)
+              → Fhom (g ∘ f) ＝ (Fhom g) ∘ (Fhom f)
 
 \end{code}
 
-Functor Notation
+We define some functor notation in the style of category notation. To
+use this for some functor F, we write
+"open FunctorNotation F renaming (functor-map to F')" where F' is the name
+we want to use for the functor.
 
 \begin{code}
 
-record MAP {𝓤 𝓥 : Universe} (A : 𝓤 ̇ ) (B : 𝓥 ̇ ) : 𝓤 ⊔ 𝓥 ̇ where
+record FUNCTORMAP {𝓤 𝓥 : Universe} (A : 𝓤 ̇ ) (B : 𝓥 ̇ ) : 𝓤 ⊔ 𝓥 ̇ where
  field
-  func : A → B
+  gen-functor-map : A → B
 
-open MAP {{...}} public
+open FUNCTORMAP {{...}} public
 
-record FunctorGen {A : WildCategory 𝓤 𝓥} {B : WildCategory 𝓦 𝓣}
+record FUNNOTATION {A : WildCategory 𝓤 𝓥} {B : WildCategory 𝓦 𝓣}
                        (F : Functor A B) : 𝓤 ⊔ 𝓥 ⊔ 𝓣 ̇ where
  
  open CategoryNotation A
  open CategoryNotation B
  field 
-  id-pres : (a : obj A) → Functor.Fhom F {a} id ＝ id
-  distrib : {a b c : obj A}
-            (g : hom b c)
-            (f : hom a b)
-          → Functor.Fhom F (g ∘ f)
-          ＝ Functor.Fhom F g ∘ Functor.Fhom F f
+  id-preserved : (a : obj A) → Functor.Fhom F {a} id ＝ id
+  distributes : {a b c : obj A}
+                (g : hom b c)
+                (f : hom a b)
+              → Functor.Fhom F (g ∘ f)
+              ＝ Functor.Fhom F g ∘ Functor.Fhom F f
 
-open FunctorGen {{...}} public
+open FUNNOTATION {{...}} public
 
 module FunctorNotation {A : WildCategory 𝓤 𝓥} {B : WildCategory 𝓦 𝓣}
                        (F : Functor A B) where
@@ -72,20 +75,22 @@ module FunctorNotation {A : WildCategory 𝓤 𝓥} {B : WildCategory 𝓦 𝓣}
  open CategoryNotation A
  open CategoryNotation B
 
- instance
-  test : MAP (obj A) (obj B)
-  func {{test}} = Functor.Fobj F
+ functor-map = gen-functor-map
 
  instance
-  test' : {a b : obj A} → MAP (hom a b) (hom (func a) (func b))
-  func {{test'}} = Functor.Fhom F
+  fobj : FUNCTORMAP (obj A) (obj B)
+  gen-functor-map {{fobj}} = Functor.Fobj F
 
  instance
-  test'' : FunctorGen F
-  id-pres {{test''}} = Functor.id-pres F
-  distrib {{test''}} = Functor.distrib F
+  fhom : {a b : obj A}
+       → FUNCTORMAP (hom a b) (hom (functor-map a) (functor-map b))
+  gen-functor-map {{fhom}} = Functor.Fhom F
 
- functor-map = func
+ instance
+  functor-notation : FUNNOTATION F
+  id-preserved {{functor-notation}} = Functor.id-preserved F
+  distributes {{functor-notation}} = Functor.distributes F
+
 
 \end{code}
 
@@ -107,11 +112,11 @@ _F∘_ {_} {_} {_} {_} {_} {_} {A} {B} {C} G' F' = functor
   open FunctorNotation F' renaming (functor-map to F)
   open FunctorNotation G' renaming (functor-map to G)
   
-  fobj : obj A → obj C
-  fobj x = G (F x)
+  Fobj : obj A → obj C
+  Fobj x = G (F x)
 
-  fhom : {a b : obj A} → hom a b → hom (fobj a) (fobj b)
-  fhom h = G (F h)
+  Fhom : {a b : obj A} → hom a b → hom (Fobj a) (Fobj b)
+  Fhom h = G (F h)
 
   id-eq : (a : obj A)
         → G (F id) ＝ id
@@ -119,8 +124,8 @@ _F∘_ {_} {_} {_} {_} {_} {_} {A} {B} {C} G' F' = functor
             G id     ＝⟨ ii ⟩
             id       ∎
    where
-    i  = ap G (id-pres a)
-    ii = id-pres (F a)
+    i  = ap G (id-preserved a)
+    ii = id-preserved (F a)
 
   f-distrib : {a b c : obj A}
               (g : hom b c)
@@ -130,10 +135,10 @@ _F∘_ {_} {_} {_} {_} {_} {_} {A} {B} {C} G' F' = functor
                   G (F g ∘ F f)     ＝⟨ ii ⟩
                   G (F g) ∘ G (F f) ∎
    where
-    i  = ap G (distrib g f)
-    ii = distrib (F g) (F f)
+    i  = ap G (distributes g f)
+    ii = distributes (F g) (F f)
 
   functor : Functor A C
-  functor = make-functor fobj fhom id-eq f-distrib
+  functor = make-functor Fobj Fhom id-eq f-distrib
 
 \end{code}
