@@ -41,6 +41,7 @@ import Categories.Univalent
 import Categories.Functor
 import Categories.Functor-Composition
 import Categories.NaturalTransformation
+import Categories.DisplayedCategories.Type
 
 import Categories.Notation.index
 
