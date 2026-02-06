@@ -35,7 +35,9 @@ We want to show, because somebody asked [1], that such a function can
 be defined by transfinite induction on ω². We will define a function B
 of the same type as A that satisfies the same equations.
 
-We assume function extensionality.
+We assume function extensionality (which, as illustrated at the very
+end of this file, doesn't impair the computational behaviour of our
+definition).
 
 \begin{code}
 
@@ -59,8 +61,8 @@ We work with ordinals as defined in [3].
 \end{code}
 
 But see also the following link, which is not used here, which works
-with an encoding of ordinals similar to the von Neumann encoding
-(check the references there).
+with an encoding of ordinals similar to the von Neumann encoding,
+shown to be equivalent to the one we use (check the references there).
 
 \begin{code}
 
@@ -74,7 +76,7 @@ underlying set of ω² is the following, by construction.
 
 \begin{code}
 
- _ : ⟨ ω² ⟩ ＝ (ℕ × ℕ)
+ _ : ⟨ ω² ⟩ ＝ ℕ × ℕ
  _ = refl
 
 \end{code}
@@ -88,9 +90,9 @@ Abbreviation for the underlying order of ω².
 
 \end{code}
 
-Because this is the lexicographic order (with the right component as
-the most significant one, which is what causes the swapping phenomenon
-below), the following two properties hold.
+Because this is the lexicographic order on ℕ × ℕ (with the right
+component as the most significant one, which is what causes the
+swapping phenomenon below), the following two properties hold.
 
 \begin{code}
 
@@ -102,7 +104,8 @@ below), the following two properties hold.
 
 \end{code}
 
-The following is the step function for the recursion.
+The following is the step function for the recursive definition given
+below.
 
 \begin{code}
 
@@ -124,7 +127,7 @@ The following is the step function for the recursion.
 
 Notice that σ is *not* recursively defined. We now define B by
 transfinite recursion on ω² using this. Notice the swapping of the
-arguments.
+arguments (alluded to above).
 
 \begin{code}
 
@@ -141,20 +144,18 @@ follows directly from the unfolding behaviour of transfinite recursion.
  B-behaviour : (m n : ℕ) → B m n ＝ σ (n , m) (λ (n' , m') _ → B m' n')
  B-behaviour m n = Transfinite-recursion-behaviour fe ω² σ (n , m)
 
- Ackermann-equation₀ : (n : ℕ) → B 0 n ＝ succ n
- Ackermann-equation₀ n = B-behaviour 0 n
-
- Ackermann-equation₁ : (m : ℕ) → B (succ m) 0 ＝ B m 1
- Ackermann-equation₁ m = B-behaviour (succ m) 0
-
+ Ackermann-equation₀ : (n : ℕ)   → B 0        n        ＝ succ n
+ Ackermann-equation₁ : (m : ℕ)   → B (succ m) 0        ＝ B m 1
  Ackermann-equation₂ : (m n : ℕ) → B (succ m) (succ n) ＝ B m (B (succ m) n)
+
+ Ackermann-equation₀ n   = B-behaviour 0        n
+ Ackermann-equation₁ m   = B-behaviour (succ m) 0
  Ackermann-equation₂ m n = B-behaviour (succ m) (succ n)
 
 \end{code}
 
-We observe that this computes, despite the assumption of function
-extensionality, which is only used to prove the correctness of the
-function.
+To conclude, we observe that this computes, despite the assumption of
+function extensionality, by giving an example.
 
 \begin{code}
 
@@ -162,3 +163,11 @@ function.
  _ = refl
 
 \end{code}
+
+Function extensionality is used, indirectly, only in order to prove
+that B satisfies the required equations.
+
+Additionally, notice that function extensionality was never used
+explicitly in this module. It was only used as a parameter for the
+imported modules. This illustrates how functional extensionality is
+useful for modularity.
