@@ -10,11 +10,15 @@ open import MLTT.Spartan
 open import Notation.UnderlyingType
 open import UF.DependentEquality
 
-module Categories.DisplayedCategories.DisplayedFunctor where
+module Categories.Displayed.Functor where
 
-open import Categories.Type
+open import Categories.Pre
 open import Categories.Functor
-open import Categories.DisplayedCategories.Type
+open import Categories.Notation.Wild
+open import Categories.Notation.Pre
+open import Categories.Notation.Functor
+open import Categories.Displayed.Pre
+open import Categories.Displayed.Notation.Pre
 
 \end{code}
 
@@ -24,32 +28,32 @@ base precategories which lie below the displayed precategories.
 
 \begin{code}
 
-record DisplayedFunctor {C : Precategory 𝓦 𝓣}
-                        {C' : Precategory 𝓦' 𝓣'}
-                        (F' : Functor ⟨ C ⟩ ⟨ C' ⟩)
-                        (D : DisplayedPrecategory 𝓤 𝓥 C)
-                        (D' : DisplayedPrecategory 𝓤' 𝓥' C')
+record DisplayedFunctor {P : Precategory 𝓦 𝓣}
+                        {P' : Precategory 𝓦' 𝓣'}
+                        (F' : Functor ⟨ P ⟩ ⟨ P' ⟩)
+                        (D : DisplayedPrecategory 𝓤 𝓥 P)
+                        (D' : DisplayedPrecategory 𝓤' 𝓥' P')
                       : (𝓦 ⊔ 𝓣 ⊔ 𝓤 ⊔ 𝓤' ⊔ 𝓥 ⊔ 𝓥') ̇  where
- open CategoryNotation ⟨ C ⟩
+ open PrecategoryNotation P
  open FunctorNotation F' renaming (functor-map to F)
  open DisplayedNotation D
  open DisplayedNotation D'
  field
-  obj-map : {c : obj C}
+  obj-map : {c : obj P}
           → obj[ c ]
           → obj[ F c ]
-  hom-map : {c c' : obj C}
+  hom-map : {c c' : obj P}
             {f : hom c c'}
             {x : obj[ c ]}
             {y : obj[ c' ]}
           → hom[ f ] x y
           → hom[ F f ] (obj-map x) (obj-map y)
-  id-map-pres : {c : obj C}
+  id-map-pres : {c : obj P}
                 {a : obj[ c ]}
               → hom-map disp-id
               ＝⟦ (λ - → hom[ - ] (obj-map a) (obj-map a)) , id-preserved c ⟧
                 disp-id
-  map-distrib : {a b c : obj ⟨ C ⟩}
+  map-distrib : {a b c : obj P}
                 {x : obj[ a ]}
                 {y : obj[ b ]}
                 {z : obj[ c ]}
@@ -57,6 +61,6 @@ record DisplayedFunctor {C : Precategory 𝓦 𝓣}
                 {g' : hom b c}
                 {f : hom[ f' ] x y}
                 {g : hom[ g' ] y z}
-              → hom-map (g ∘' f) ＝⟦ (λ - → hom[ - ] _ _) , distributes g' f' ⟧ hom-map g ∘' hom-map f
+              → hom-map (g ∘' f) ＝⟦ (λ - → hom[ - ] _ _) , distributivity g' f' ⟧ hom-map g ∘' hom-map f
 
 \end{code}

@@ -13,7 +13,6 @@ open import UF.Equiv-FunExt
 open import MLTT.Spartan
 open import Categories.Wild
 open import Categories.Pre
-open import Categories.Notation.Wild
 open import Categories.Notation.Pre
 open import Notation.UnderlyingType
 open import UF.FunExt
