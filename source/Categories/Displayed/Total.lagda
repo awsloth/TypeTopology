@@ -29,7 +29,7 @@ TotalPrecategory : {𝓦 𝓨 : Universe}
 TotalPrecategory {𝓤} {𝓥} {𝓦} {𝓨} {P} D = (totalwildcategory , total-is-precategory)
  where
   open PrecategoryNotation P
-  open DisplayedNotation D
+  open DispPrecatNotation D
 
   totalwildcategory : WildCategory (𝓤 ⊔ 𝓦) (𝓥 ⊔ 𝓨)
   totalwildcategory = wildcategory (Σ c ꞉ obj P , obj[ c ])

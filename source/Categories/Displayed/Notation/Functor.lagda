@@ -1,5 +1,7 @@
 Anna Williams 14 February 2026
 
+Functor Notation
+
 \begin{code}
 
 {-# OPTIONS --safe --without-K #-}

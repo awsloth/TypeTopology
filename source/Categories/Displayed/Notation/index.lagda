@@ -1,5 +1,7 @@
 Anna Williams 14 February 2026
 
+Notation for working with displayed categories and functors.
+
 \begin{code}
 
 {-# OPTIONS --safe --without-K #-}

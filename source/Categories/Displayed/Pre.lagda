@@ -57,9 +57,9 @@ record DisplayedPrecategory (𝓦 𝓣 : Universe)
 
  private
   hom[-] : {a b : obj P}
-           (x : obj[ a ])
-           (y : obj[ b ])
-         → hom a b → 𝓣 ̇
+            (x : obj[ a ])
+            (y : obj[ b ])
+          → hom a b → 𝓣 ̇
   hom[-] x y = λ - → hom[ - ] x y
 
  field
