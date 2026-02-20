@@ -1,6 +1,6 @@
 Martin Escardo & Tom de Jong, June 2023.
 
-Iterative multisets, iterative sets, and iterative ordinals.
+Iterative multisets, iterative sets, and ordinals.
 
 For a blog-post style exposition of what is done here, see this post:
 https://mathstodon.xyz/@MartinEscardo/110753930251021051
@@ -25,6 +25,7 @@ import Iterative.Multisets-Addendum
 import Iterative.Multisets-HFLO
 import Iterative.Sets-Addendum
 import Iterative.Ordinals-Addendum
+import Iterative.Multisets-IdentificationExample -- by Alice Laroche
 import Iterative.Finite -- by Alice Laroche
 
 \end{code}
