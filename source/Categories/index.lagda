@@ -42,7 +42,6 @@ import Categories.Functor
 import Categories.Functor-Composition
 import Categories.NaturalTransformation
 
-import Categories.Examples.index
 import Categories.Notation.index
 
 \end{code}
