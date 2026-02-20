@@ -32,24 +32,25 @@ module _ {P : Precategory 𝓤 𝓥} (D : DisplayedPrecategory 𝓦 𝓣 P) wher
  open DispPrecatNotation D
 
  is-displayed-category : (𝓤 ⊔ 𝓦 ⊔ 𝓣) ̇
- is-displayed-category = (c c' : obj P)
-                    (e : c ＝ c')
-                    (d : obj[ c ])
-                    (d' : obj[ c' ])
-                  → is-equiv (D-id-to-iso e d d')
+ is-displayed-category = {a b : obj P}
+                         (e : a ＝ b)
+                         (x : obj[ a ])
+                         (y : obj[ b ])
+                       → is-equiv (D-id-to-iso e x y)
 
 
  is-displayed-category-is-prop : (fe : Fun-Ext)
                                → is-prop (is-displayed-category)
- is-displayed-category-is-prop fe x y = Π₅-is-prop fe I _ _
+ is-displayed-category-is-prop fe = implicit-Π₂-is-prop fe
+                                     (λ x y → Π₃-is-prop fe (I x y))
   where
-   I : (c c' : obj P)
-       (e : c ＝ c')
-       (d : obj[ c ])
-       (d' : obj[ c' ])
-     → is-prop (is-equiv (D-id-to-iso e d d'))
-   I c c' e d d' = being-equiv-is-prop (λ 𝓤 𝓥 → fe {𝓤} {𝓥})
-                                       (D-id-to-iso e d d')
+   I : (a b : obj P)
+       (e : a ＝ b)
+       (x : obj[ a ])
+       (y : obj[ b ])
+     → is-prop (is-equiv (D-id-to-iso e x y))
+   I a b e x y = being-equiv-is-prop (λ 𝓤 𝓥 → fe {𝓤} {𝓥})
+                                     (D-id-to-iso e x y)
 
 \end{code}
 

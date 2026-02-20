@@ -1,6 +1,7 @@
 Anna Williams 14 February 2026
 
-Notation for working with displayed categories and functors.
+Notation for working with displayed categories and displayed
+functors.
 
 \begin{code}
 

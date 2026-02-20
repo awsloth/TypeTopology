@@ -54,22 +54,22 @@ module _ {𝓤 𝓥 : Universe}
  record DCOMP : ((𝓦 ⊔ 𝓣) ⊔ (𝓤 ⊔ 𝓥))⁺ ̇  where
   field
    _○_ : {a b c : obj P}
-          {g : hom b c}
-          {f : hom a b}
-          {x : obj[ a ]}
-          {y : obj[ b ]}
-          {z : obj[ c ]}
-          (gyz : hom[ g ] y z)
-          (fxy : hom[ f ] x y)
+         {g : hom b c}
+         {f : hom a b}
+         {x : obj[ a ]}
+         {y : obj[ b ]}
+         {z : obj[ c ]}
+       → hom[ g ] y z
+       → hom[ f ] x y
        → hom[ g ◦ f ] x z
 
  open DCOMP {{...}} public
 
  record DID : ((𝓦 ⊔ 𝓣) ⊔ (𝓤 ⊔ 𝓥))⁺ ̇  where
   field
-   D-𝒊𝒅 : {c : obj P}
-             {x : obj[ c ]}
-           → hom[ 𝒊𝒅 ] x x
+   D-𝒊𝒅 : {p : obj P}
+          {x : obj[ p ]}
+        → hom[ 𝒊𝒅 ] x x
 
  open DID {{...}} public
 
@@ -89,56 +89,57 @@ module _ {𝓤 𝓥 : Universe}
                    {x : obj[ a ]}
                    {y : obj[ b ]}
                  → is-set (hom[ f ] x y)
+                 
    D-𝒊𝒅-is-right-neutral : {a b : obj P}
-                  {f' : hom a b}
+                  {f : hom a b}
                   {x : obj[ a ]}
                   {y : obj[ b ]}
-                  (f : hom[ f' ] x y)
-                → f ○ D-𝒊𝒅
-                ＝⟦ (λ - → hom[ - ] x y) , 𝒊𝒅-is-right-neutral f' ⟧
-                  f
+                  (𝕗 : hom[ f ] x y)
+                → 𝕗 ○ D-𝒊𝒅
+                ＝⟦ (λ - → hom[ - ] x y) , 𝒊𝒅-is-right-neutral f ⟧
+                  𝕗
 
    D-𝒊𝒅-is-left-neutral : {a b : obj P}
-                 {f' : hom a b}
+                 {f : hom a b}
                  {x : obj[ a ]}
                  {y : obj[ b ]}
-                 (f : hom[ f' ] x y)
-               → D-𝒊𝒅 ○ f
-               ＝⟦ (λ - → hom[ - ] x y) , 𝒊𝒅-is-left-neutral f' ⟧
-                 f
+                 (𝕗 : hom[ f ] x y)
+               → D-𝒊𝒅 ○ 𝕗
+               ＝⟦ (λ - → hom[ - ] x y) , 𝒊𝒅-is-left-neutral f ⟧
+                 𝕗
   
    D-assoc : {a b c d : obj P}
-             {f' : hom a b}
-             {g' : hom b c}
-             {h' : hom c d}
+             {f : hom a b}
+             {g : hom b c}
+             {h : hom c d}
              {x : obj[ a ]}
              {y : obj[ b ]}
              {z : obj[ c ]}
              {w : obj[ d ]}
-             {f : hom[ f' ] x y}
-             {g : hom[ g' ] y z}
-             {h : hom[ h' ] z w}
-           → h ○ (g ○ f)
-           ＝⟦ (λ - → hom[ - ] x w) , assoc f' g' h' ⟧
-             (h ○ g) ○ f
+             {𝕗 : hom[ f ] x y}
+             {𝕘 : hom[ g ] y z}
+             {𝕙 : hom[ h ] z w}
+           → 𝕙 ○ (𝕘 ○ 𝕗)
+           ＝⟦ (λ - → hom[ - ] x w) , assoc f g h ⟧
+             (𝕙 ○ 𝕘) ○ 𝕗
 
-   D-inverse : {c c' : obj P}
-            {d : obj[ c ]}
-            {d' : obj[ c' ]}
-            (isom : c ≅ c')
-            (f : hom[ ⌜ isom ⌝ ] d d')
+   D-inverse : {a b : obj P}
+               {x : obj[ a ]}
+               {y : obj[ b ]}
+               (f : a ≅ b)
+               (𝕗 : hom[ ⌜ f ⌝ ] x y)
+             → 𝓥 ̇
+   _≅[_]_ : {a b : obj P}
+            (x : obj[ a ])
+            (f : a ≅ b)
+            (y : obj[ b ])
           → 𝓥 ̇
-   _≅[_]_ : {c c' : obj P}
-            (d : obj[ c ])
-            (iso : c ≅ c')
-            (d' : obj[ c' ])
-          → 𝓥 ̇
-   D-id-to-iso : {c c' : obj P}
-                 (e : c ＝ c')
-                 (d : obj[ c ])
-                 (d' : obj[ c' ])
-                 (e' : d ＝⟦ obj[_] , e ⟧ d')
-               → d ≅[ id-to-iso c c' e ] d'
+   D-id-to-iso : {a b : obj P}
+                 (e : a ＝ b)
+                 (x : obj[ a ])
+                 (y : obj[ b ])
+               → x ＝⟦ obj[_] , e ⟧ y
+               → x ≅[ id-to-iso a b e ] y
 
  open DNotation {{...}} public
 

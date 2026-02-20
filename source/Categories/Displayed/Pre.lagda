@@ -19,7 +19,7 @@ module Categories.Displayed.Pre where
 \end{code}
 
 We first define the notion of a displayed precategory. The objects and homs of
-this are indexed by a given base precategory. We then derive the other parts of
+this are indexed by a given base precategory. We then derive the usual parts of
 a precategory, including the usual axioms which now have dependent equalities.
 
 More precisely, a displayed precategory over a precategory P consists of,
@@ -34,14 +34,14 @@ More precisely, a displayed precategory over a precategory P consists of,
  - for all morphisms f : a → b and g : b → c in P and objects x : obj[a],
    y : obj[b], z : obj[c], a function
    
-   ∘ : hom[g] y z → hom[f] x y → hom[f ○ g] x z.
+   ○ : hom[g] y z → hom[f] x y → hom[f ◦ g] x z.
 
 
 Such that the following hold
 
-- f ∘ id = id
-- id ∘ f = f
-- f ∘ (g ∘ h) = (f ∘ g) ∘ h 
+- f ○ id = id
+- id ○ f = f
+- f ○ (g ○ h) = (f ○ g) ○ h 
 
 \begin{code}
 
@@ -67,51 +67,51 @@ record DisplayedPrecategory (𝓦 𝓣 : Universe)
        → hom[ 𝒊𝒅 ] x x
 
   _○_ : {a b c : obj P}
-         {g : hom b c}
-         {f : hom a b}
-         {x : obj[ a ]}
-         {y : obj[ b ]}
-         {z : obj[ c ]}
-         (gyz : hom[ g ] y z)
-         (fxy : hom[ f ] x y)
-       → hom[ g ◦ f ] x z
+        {g : hom b c}
+        {f : hom a b}
+        {x : obj[ a ]}
+        {y : obj[ b ]}
+        {z : obj[ c ]}
+      → hom[ g ] y z
+      → hom[ f ] x y
+      → hom[ g ◦ f ] x z
 
  private
   hom[-] : {a b : obj P}
-            (x : obj[ a ])
-            (y : obj[ b ])
-          → hom a b → 𝓣 ̇
+           (x : obj[ a ])
+           (y : obj[ b ])
+         → hom a b → 𝓣 ̇
   hom[-] x y = λ - → hom[ - ] x y
 
  field
   D-𝒊𝒅-is-right-neutral : {a b : obj P}
-                          {f' : hom a b}
+                          {f : hom a b}
                           {x : obj[ a ]}
                           {y : obj[ b ]}
-                          (f : hom[ f' ] x y)
-                        → f ○ D-𝒊𝒅 ＝⟦ hom[-] x y , 𝒊𝒅-is-right-neutral f' ⟧ f
+                          (𝕗 : hom[ f ] x y)
+                        → 𝕗 ○ D-𝒊𝒅 ＝⟦ hom[-] x y , 𝒊𝒅-is-right-neutral f ⟧ 𝕗
 
   D-𝒊𝒅-is-left-neutral : {a b : obj P}
-                         {f' : hom a b}
+                         {f : hom a b}
                          {x : obj[ a ]}
                          {y : obj[ b ]}
-                         (f : hom[ f' ] x y)
-                       → D-𝒊𝒅 ○ f ＝⟦ hom[-] x y , 𝒊𝒅-is-left-neutral f' ⟧ f
+                         (𝕗 : hom[ f ] x y)
+                       → D-𝒊𝒅 ○ 𝕗 ＝⟦ hom[-] x y , 𝒊𝒅-is-left-neutral f ⟧ 𝕗
   
   D-assoc : {a b c d : obj P}
-            {f' : hom a b}
-            {g' : hom b c}
-            {h' : hom c d}
+            {f : hom a b}
+            {g : hom b c}
+            {h : hom c d}
             {x : obj[ a ]}
             {y : obj[ b ]}
             {z : obj[ c ]}
             {w : obj[ d ]}
-            {f : hom[ f' ] x y}
-            {g : hom[ g' ] y z}
-            {h : hom[ h' ] z w}
-          → h ○ (g ○ f)
-          ＝⟦ hom[-] x w , assoc f' g' h' ⟧
-            (h ○ g) ○ f
+            {𝕗 : hom[ f ] x y}
+            {𝕘 : hom[ g ] y z}
+            {𝕙 : hom[ h ] z w}
+          → 𝕙 ○ (𝕘 ○ 𝕗)
+          ＝⟦ hom[-] x w , assoc f g h ⟧
+            (𝕙 ○ 𝕘) ○ 𝕗
 
 \end{code}
 
@@ -119,26 +119,26 @@ We can now define a displayed version of isomorphism between objects.
 
 \begin{code}
 
- D-inverse : {p q : obj P}
-             {d : obj[ p ]}
-             {d' : obj[ q ]}
-             (f : p ≅ q)
-             (𝕗 : hom[ ⌜ f ⌝ ] d d')
+ D-inverse : {a  b : obj P}
+             {x : obj[ a ]}
+             {y : obj[ b ]}
+             (f : a ≅ b)
+             (𝕗 : hom[ ⌜ f ⌝ ] x y)
            → 𝓣 ̇
- D-inverse {q} {p} {d} {d'} f 𝕗
-   = Σ 𝕗⁻¹ ꞉ hom[ ⌞ underlying-morphism-is-isomorphism f ⌟ ] d' d
-     , ((𝕗⁻¹ ○ 𝕗 ＝⟦ hom[-] d d , i ⟧ D-𝒊𝒅)
-     × (𝕗 ○ 𝕗⁻¹ ＝⟦ hom[-] d' d' , ii ⟧ D-𝒊𝒅))
+ D-inverse {a} {b} {x} {y} f 𝕗
+   = Σ 𝕗⁻¹ ꞉ hom[ ⌞ underlying-morphism-is-isomorphism f ⌟ ] y x
+     , ((𝕗⁻¹ ○ 𝕗 ＝⟦ hom[-] x x , i ⟧ D-𝒊𝒅)
+      × (𝕗 ○ 𝕗⁻¹ ＝⟦ hom[-] y y , ii ⟧ D-𝒊𝒅))
   where
    i = ⌞ underlying-morphism-is-isomorphism f ⌟-is-left-inverse
    ii = ⌞ underlying-morphism-is-isomorphism f ⌟-is-right-inverse
 
- _≅[_]_ : {p q : obj P}
-          (d : obj[ p ])
-          (f : p ≅ q)
-          (d' : obj[ q ])
+ _≅[_]_ : {a b : obj P}
+          (x : obj[ a ])
+          (f : a ≅ b)
+          (y : obj[ b ])
         → 𝓣 ̇
- d ≅[ f ] d' = Σ 𝕗 ꞉ hom[ ⌜ f ⌝ ] d d' , D-inverse f 𝕗
+ x ≅[ f ] y = Σ 𝕗 ꞉ hom[ ⌜ f ⌝ ] x y , D-inverse f 𝕗
        
 \end{code}
 
@@ -147,15 +147,15 @@ the notion of id-to-iso for displayed precategories.
 
 \begin{code}
 
- D-id-to-iso : {p q : obj P}
-               (e : p ＝ q)
-               (d : obj[ p ])
-               (d' : obj[ q ])
-               (e' : d ＝⟦ obj[_] , e ⟧ d')
-             → d ≅[ id-to-iso p q e ] d'
- D-id-to-iso refl d _ refl = D-𝒊𝒅 , D-𝒊𝒅 , h , h
+ D-id-to-iso : {a b : obj P}
+               (e : a ＝ b)
+               (x : obj[ a ])
+               (y : obj[ b ])
+             → x ＝⟦ obj[_] , e ⟧ y
+             → x ≅[ id-to-iso a b e ] y
+ D-id-to-iso refl x _ refl = D-𝒊𝒅 , D-𝒊𝒅 , h , h
   where
-   h : D-𝒊𝒅 ○ D-𝒊𝒅 ＝⟦ hom[-] d d , 𝒊𝒅-is-left-neutral 𝒊𝒅 ⟧ D-𝒊𝒅
+   h : D-𝒊𝒅 ○ D-𝒊𝒅 ＝⟦ hom[-] x x , 𝒊𝒅-is-left-neutral 𝒊𝒅 ⟧ D-𝒊𝒅
    h = D-𝒊𝒅-is-left-neutral D-𝒊𝒅
 
 \end{code}

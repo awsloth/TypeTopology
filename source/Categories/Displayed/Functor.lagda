@@ -38,13 +38,13 @@ record DisplayedFunctor {P : Precategory 𝓦 𝓣}
  open DispPrecatNotation D
  open DispPrecatNotation D'
  field
-  F₀ : {c : obj P}
-          → obj[ c ]
-          → obj[ F c ]
-  F₁ : {c c' : obj P}
-       {f : hom c c'}
-       {x : obj[ c ]}
-       {y : obj[ c' ]}
+  F₀ : {p : obj P}
+     → obj[ p ]
+     → obj[ F p ]
+  F₁ : {a b : obj P}
+       {f : hom a b}
+       {x : obj[ a ]}
+       {y : obj[ b ]}
      → hom[ f ] x y
      → hom[ F f ] (F₀ x) (F₀ y)
 
@@ -57,12 +57,12 @@ record DisplayedFunctor {P : Precategory 𝓦 𝓣}
                  {x : obj[ a ]}
                  {y : obj[ b ]}
                  {z : obj[ c ]}
-                 {f' : hom a b}
-                 {g' : hom b c}
-                 {f : hom[ f' ] x y}
-                 {g : hom[ g' ] y z}
-               → F₁ (g ○ f)
-               ＝⟦ (λ - → hom[ - ] _ _) , distributivity g' f' ⟧
-                 F₁ g ○ F₁ f
+                 {f : hom a b}
+                 {g : hom b c}
+                 {𝕗 : hom[ f ] x y}
+                 {𝕘 : hom[ g ] y z}
+               → F₁ (𝕘 ○ 𝕗)
+               ＝⟦ (λ - → hom[ - ] _ _) , distributivity g f ⟧
+                 F₁ 𝕘 ○ F₁ 𝕗
 
 \end{code}

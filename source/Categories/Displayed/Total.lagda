@@ -40,35 +40,23 @@ TotalPrecategory {𝓤} {𝓥} {𝓦} {𝓨} {P} D = (totalwildcategory
 
   totalwildcategory : WildCategory (𝓤 ⊔ 𝓦) (𝓥 ⊔ 𝓨)
   totalwildcategory = wildcategory
-                       (Σ c ꞉ obj P , obj[ c ])
+                       (Σ p ꞉ obj P , obj[ p ])
                        (λ (a , x) (b , y) → Σ f ꞉ hom a b , hom[ f ] x y)
                        (𝒊𝒅 , D-𝒊𝒅)
-                       (λ (g' , g) (f' , f) → g' ◦ f' , g ○ f)
-                       (λ (f' , f) → to-Σ-＝ (𝒊𝒅-is-left-neutral f'
-                                   , Idtofun (did _ _)
-                                     (D-𝒊𝒅-is-left-neutral f)))
-                       (λ (f' , f) → to-Σ-＝ (𝒊𝒅-is-right-neutral f'
-                                   , Idtofun (did _ _)
-                                     (D-𝒊𝒅-is-right-neutral f)))
+                       (λ (g , 𝕘) (f , 𝕗) → g ◦ f , 𝕘 ○ 𝕗)
+                       (λ (f , 𝕗) → to-Σ-＝ (𝒊𝒅-is-left-neutral f
+                                   , Idtofun (dep-id _ _)
+                                     (D-𝒊𝒅-is-left-neutral 𝕗)))
+                       (λ (f , 𝕗) → to-Σ-＝ (𝒊𝒅-is-right-neutral f
+                                   , Idtofun (dep-id _ _)
+                                     (D-𝒊𝒅-is-right-neutral 𝕗)))
                        (λ f g h → to-Σ-＝ (assoc _ _ _
-                                , Idtofun (did _ _) D-assoc))
+                                , Idtofun (dep-id _ _) D-assoc))
    where
-    did = dependent-Id-via-transport
+    dep-id = dependent-Id-via-transport
 
   total-is-precategory : is-precategory totalwildcategory
   total-is-precategory _ _ = Σ-is-set (hom-is-set P) (λ _ → hom[-]-is-set)
-
-\end{code}
-
-Total category
-
-begin{code}
-
-TotalCategory : (C : Category 𝓤 𝓥) (D : DisplayedCategory 𝓦 𝓣 ⟨ C ⟩) → Category (𝓤 ⊔ 𝓦) (𝓥 ⊔ 𝓣)
-TotalCategory C D = TotalPrecategory ⟨ D ⟩ , total-is-category
- where
-  total-is-category : is-category (TotalPrecategory ⟨ D ⟩)
-  total-is-category a b = {!id-to-iso-is-equiv C!}
 
 \end{code}
 
