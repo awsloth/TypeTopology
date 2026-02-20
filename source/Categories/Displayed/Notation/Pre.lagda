@@ -19,7 +19,7 @@ module Categories.Displayed.Notation.Pre where
 \end{code}
 
 We now define some notation for displayed precategories similarly to that of
-wild categories.
+categories.
 
 \begin{code}
 
@@ -53,7 +53,7 @@ module _ {𝓤 𝓥 : Universe}
 
  record DCOMP : ((𝓦 ⊔ 𝓣) ⊔ (𝓤 ⊔ 𝓥))⁺ ̇  where
   field
-   _∘'_ : {a b c : obj P}
+   _◦_ : {a b c : obj P}
           {g : hom b c}
           {f : hom a b}
           {x : obj[ a ]}
@@ -67,7 +67,7 @@ module _ {𝓤 𝓥 : Universe}
 
  record DID : ((𝓦 ⊔ 𝓣) ⊔ (𝓤 ⊔ 𝓥))⁺ ̇  where
   field
-   disp-id : {c : obj P}
+   D-𝒊𝒅 : {c : obj P}
              {x : obj[ c ]}
            → hom[ 𝒊𝒅 ] x x
 
@@ -75,12 +75,12 @@ module _ {𝓤 𝓥 : Universe}
 
  instance
   dcomp-m : DCOMP
-  _∘'_ {{dcomp-m}} = DisplayedPrecategory._∘'_ D
+  _◦_ {{dcomp-m}} = DisplayedPrecategory._◦_ D
 
 
  instance
   d-id-m : DID
-  disp-id {{d-id-m}} = DisplayedPrecategory.disp-id D
+  D-𝒊𝒅 {{d-id-m}} = DisplayedPrecategory.D-𝒊𝒅 D
 
  record DNotation : ((𝓦 ⊔ 𝓣) ⊔ (𝓤 ⊔ 𝓥))⁺ ̇  where
   field
@@ -89,40 +89,40 @@ module _ {𝓤 𝓥 : Universe}
                    {x : obj[ a ]}
                    {y : obj[ b ]}
                  → is-set (hom[ f ] x y)
-   cmp-right-id : {a b : obj P}
+   D-𝒊𝒅-is-right-neutral : {a b : obj P}
                   {f' : hom a b}
                   {x : obj[ a ]}
                   {y : obj[ b ]}
                   (f : hom[ f' ] x y)
-                → f ∘' disp-id
+                → f ◦ D-𝒊𝒅
                 ＝⟦ (λ - → hom[ - ] x y) , 𝒊𝒅-is-right-neutral f' ⟧
                   f
 
-   cmp-left-id : {a b : obj P}
+   D-𝒊𝒅-is-left-neutral : {a b : obj P}
                  {f' : hom a b}
                  {x : obj[ a ]}
                  {y : obj[ b ]}
                  (f : hom[ f' ] x y)
-               → disp-id ∘' f
+               → D-𝒊𝒅 ◦ f
                ＝⟦ (λ - → hom[ - ] x y) , 𝒊𝒅-is-left-neutral f' ⟧
                  f
   
-   cmp-assoc : {a b c d : obj P}
-               {f' : hom a b}
-               {g' : hom b c}
-               {h' : hom c d}
-               {x : obj[ a ]}
-               {y : obj[ b ]}
-               {z : obj[ c ]}
-               {w : obj[ d ]}
-               {f : hom[ f' ] x y}
-               {g : hom[ g' ] y z}
-               {h : hom[ h' ] z w}
-             → h ∘' (g ∘' f)
-             ＝⟦ (λ - → hom[ - ] x w) , assoc f' g' h' ⟧
-               (h ∘' g) ∘' f
+   D-assoc : {a b c d : obj P}
+             {f' : hom a b}
+             {g' : hom b c}
+             {h' : hom c d}
+             {x : obj[ a ]}
+             {y : obj[ b ]}
+             {z : obj[ c ]}
+             {w : obj[ d ]}
+             {f : hom[ f' ] x y}
+             {g : hom[ g' ] y z}
+             {h : hom[ h' ] z w}
+           → h ◦ (g ◦ f)
+           ＝⟦ (λ - → hom[ - ] x w) , assoc f' g' h' ⟧
+             (h ◦ g) ◦ f
 
-   is-iso-disp : {c c' : obj P}
+   D-inverse : {c c' : obj P}
             {d : obj[ c ]}
             {d' : obj[ c' ]}
             (isom : c ≅ c')
@@ -133,12 +133,12 @@ module _ {𝓤 𝓥 : Universe}
             (iso : c ≅ c')
             (d' : obj[ c' ])
           → 𝓥 ̇
-   id-to-iso-disp : {c c' : obj P}
-                  (e : c ＝ c')
-                  (d : obj[ c ])
-                  (d' : obj[ c' ])
-                  (e' : d ＝⟦ obj[_] , e ⟧ d')
-                → d ≅[ id-to-iso c c' e ] d'
+   D-id-to-iso : {c c' : obj P}
+                 (e : c ＝ c')
+                 (d : obj[ c ])
+                 (d' : obj[ c' ])
+                 (e' : d ＝⟦ obj[_] , e ⟧ d')
+               → d ≅[ id-to-iso c c' e ] d'
 
  open DNotation {{...}} public
 
@@ -157,22 +157,24 @@ module DispPrecatNotation {𝓦 𝓣 : Universe}
 
  instance
   d-id : DID D
-  disp-id {{d-id}} = DisplayedPrecategory.disp-id D
+  D-𝒊𝒅 {{d-id}} = DisplayedPrecategory.D-𝒊𝒅 D
 
  instance
   d-comp : DCOMP D
-  _∘'_ {{d-comp}} = DisplayedPrecategory._∘'_ D
+  _◦_ {{d-comp}} = DisplayedPrecategory._◦_ D
 
 
  instance
   d-notation : DNotation D
   hom[-]-is-set {{d-notation}} = DisplayedPrecategory.hom[-]-is-set D
-  cmp-right-id {{d-notation}} = DisplayedPrecategory.cmp-right-id D
-  cmp-left-id {{d-notation}} = DisplayedPrecategory.cmp-left-id D
-  cmp-assoc {{d-notation}} = DisplayedPrecategory.cmp-assoc D
-  is-iso-disp {{d-notation}} = DisplayedPrecategory.is-iso-disp D
+  D-𝒊𝒅-is-right-neutral {{d-notation}}
+   = DisplayedPrecategory.D-𝒊𝒅-is-right-neutral D
+  D-𝒊𝒅-is-left-neutral {{d-notation}}
+   = DisplayedPrecategory.D-𝒊𝒅-is-left-neutral D
+  D-assoc {{d-notation}} = DisplayedPrecategory.D-assoc D
+  D-inverse {{d-notation}} = DisplayedPrecategory.D-inverse D
   _≅[_]_ {{d-notation}} = DisplayedPrecategory._≅[_]_ D
-  id-to-iso-disp {{d-notation}} = DisplayedPrecategory.id-to-iso-disp D
+  D-id-to-iso {{d-notation}} = DisplayedPrecategory.D-id-to-iso D
   
 
 \end{code}

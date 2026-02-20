@@ -9,9 +9,6 @@ Definition of a displayed functor.
 open import MLTT.Spartan
 open import Notation.UnderlyingType
 open import UF.DependentEquality
-
-module Categories.Displayed.Functor where
-
 open import Categories.Pre
 open import Categories.Functor
 open import Categories.Notation.Wild
@@ -19,6 +16,8 @@ open import Categories.Notation.Pre
 open import Categories.Notation.Functor
 open import Categories.Displayed.Pre
 open import Categories.Displayed.Notation.Pre
+
+module Categories.Displayed.Functor where
 
 \end{code}
 
@@ -51,9 +50,9 @@ record DisplayedFunctor {P : Precategory 𝓦 𝓣}
 
   disp-id-preserved : {c : obj P}
                       {a : obj[ c ]}
-                    → F₁ disp-id
+                    → F₁ D-𝒊𝒅
                     ＝⟦ (λ - → hom[ - ] (F₀ a) (F₀ a)) , id-preserved c ⟧
-                      disp-id
+                      D-𝒊𝒅
   disp-distrib : {a b c : obj P}
                  {x : obj[ a ]}
                  {y : obj[ b ]}
@@ -62,8 +61,8 @@ record DisplayedFunctor {P : Precategory 𝓦 𝓣}
                  {g' : hom b c}
                  {f : hom[ f' ] x y}
                  {g : hom[ g' ] y z}
-               → F₁ (g ∘' f)
+               → F₁ (g ◦ f)
                ＝⟦ (λ - → hom[ - ] _ _) , distributivity g' f' ⟧
-                 F₁ g ∘' F₁ f
+                 F₁ g ◦ F₁ f
 
 \end{code}

@@ -6,10 +6,13 @@ The Category of Magmas
 
 {-# OPTIONS --safe --without-K  #-}
 
-open import Categories.Type hiding (id ; _∘_)
+open import Categories.Wild
+open import Categories.Pre 
+open import Categories.Univalent
+open import Categories.Notation.Wild hiding (inverse ; ⌜_⌝)
 open import MLTT.Spartan
 open import UF.Base
-open import UF.Equiv hiding (_≅_ ; _≅⟨_⟩_)
+open import UF.Equiv hiding (_≅_)
 open import UF.FunExt
 open import UF.Retracts
 open import UF.Sets
@@ -27,7 +30,7 @@ module _ {𝓤 : Universe} (fe : Fun-Ext) where
  Magma = Σ X ꞉ 𝓤 ̇ , (X → X → X) × is-set X
 
  MagmaWildcat : WildCategory (𝓤 ⁺) 𝓤
- MagmaWildcat = wildcat-make Magma
+ MagmaWildcat = wildcategory Magma
                              magma-hom
                              (λ {a} → magma-id {a})
                              (λ {a} {b} {c} → magma-comp {a} {b} {c})
@@ -89,7 +92,7 @@ module _ {𝓤 : Universe} (fe : Fun-Ext) where
                           λ x → dfunext fe
                            λ y → S _ _
 
- open CategoryNotation MagmaWildcat
+ open WildCategoryNotation MagmaWildcat
 \end{code}
 
 We now show that this is a precategory
@@ -164,7 +167,7 @@ We show that Magmas have univalence
  inv-eq : {a b : 𝓤 ̇ }
           {f : a → b}
           (e : is-equiv f)
-        → inverse f e ＝ inverse' e
+        → inverse f e  ＝ inverse' e
  inv-eq {_} {_} {f}
         ((g , gp) , (g' , gp')) = inverse _ (fe _ _)
                                   λ x → g x          ＝⟨ (gp' (g x))⁻¹ ⟩
@@ -257,7 +260,7 @@ And finally show that this is a category.
      right-inv = hom-is-set MagmaPrecategory {A} {A} _ _
      is-iso-equality = to-Σ-＝ (inv-eq' , to-×-＝ left-inv right-inv)
 
-   is-cat : is-category MagmaWildcat
+   is-cat : is-category MagmaPrecategory
    is-cat A B = equiv-closed-under-∼ ⌜ characterization-of-magma-＝ ua A B ⌝
                                      (id-to-iso A B)
                                      (pr₂ (characterization-of-magma-＝ ua A B))

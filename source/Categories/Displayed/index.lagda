@@ -1,6 +1,11 @@
 Anna Williams, 28 October 2025
 
-Formalisation of displayed categories using univalent foundations.
+Formalisation of displayed categories using univalent foundations. Following the
+work of Ahrens and Lumsdaine [1].
+
+[1] Ahrens, Benedikt and Peter LeFanu Lumsdaine (Mar. 2019). “Displayed
+Categories”. Logical Methods in Computer Science Volume 15, Issue 1.
+http://dx.doi.org/10.23638/LMCS-15(1:20)2019.
 
 \begin{code}
 

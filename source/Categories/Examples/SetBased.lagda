@@ -6,8 +6,11 @@ Univalence for Set based structures
 
 {-# OPTIONS --safe --without-K #-}
 
-open import Categories.Type renaming (id to c-id)
-open import MLTT.Spartan hiding (_∘_)
+open import Categories.Wild
+open import Categories.Pre
+open import Categories.Univalent
+open import Categories.Notation.Wild hiding (inverse ; ⌜_⌝)
+open import MLTT.Spartan
 open import UF.Base
 open import UF.Equiv hiding (_≅_)
 open import UF.FunExt
@@ -84,7 +87,7 @@ module _ {S : 𝓤 ̇  → 𝓥 ̇ }
                                         g' x         ∎
 
  gen-wildcat : WildCategory ((𝓤 ⁺) ⊔ 𝓥) (𝓤 ⊔ 𝓦)
- gen-wildcat = wildcat-make (Σ S)
+ gen-wildcat = wildcategory (Σ S)
                             (λ a b → Σ f ꞉ ((pr₁ a) → (pr₁ b)) , P a b f)
                             (id , id-property)
                             (λ (f , pf) (g , pg) → (λ x → f (g x)) , comp-property (f , pf) (g , pg))
@@ -92,7 +95,7 @@ module _ {S : 𝓤 ̇  → 𝓥 ̇ }
                             (λ f → to-Σ-＝ (refl , right-id-prop f))
                             λ f g h → to-Σ-＝ (refl , assoc-prop f g h)
 
- open CategoryNotation gen-wildcat
+ open WildCategoryNotation gen-wildcat
 
  gen-precat : Precategory ((𝓤 ⁺) ⊔ 𝓥) (𝓤 ⊔ 𝓦)
  gen-precat = gen-wildcat , λ a b → Σ-is-set (Π-is-set fe (λ _ → underlying-is-set b)) (λ f → props-are-sets (P-is-prop a b f))
@@ -169,6 +172,6 @@ module _ {S : 𝓤 ̇  → 𝓥 ̇ }
      right-inv = hom-is-set gen-precat {a} {a} _ _
      is-iso-equality = to-Σ-＝ (inv-eq' , to-×-＝ left-inv right-inv)
 
-   is-cat : is-category gen-wildcat
+   is-cat : is-category gen-precat
    is-cat a b = equiv-closed-under-∼ ⌜ characterization-of-gen-＝ a b ⌝ (id-to-iso a b) (pr₂ (characterization-of-gen-＝ a b)) (eq a b)
    

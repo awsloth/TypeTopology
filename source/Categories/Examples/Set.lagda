@@ -6,10 +6,13 @@ The Category of Sets
 
 {-# OPTIONS --safe --without-K #-}
 
-open import Categories.Type renaming (id to c-id)
-open import MLTT.Spartan hiding (_∘_)
+open import Categories.Wild
+open import Categories.Pre
+open import Categories.Univalent
+open import Categories.Notation.Wild hiding (⌜_⌝)
+open import MLTT.Spartan
 open import UF.Base
-open import UF.Equiv hiding (_≅_)
+open import UF.Equiv hiding (_≅_) renaming (inverse to e-inverse)
 open import UF.FunExt
 open import UF.Sets
 open import UF.Sets-Properties
@@ -34,7 +37,7 @@ module _ {𝓤 : Universe} where
  Sets = Σ X ꞉ 𝓤 ̇ , is-set-explicit X
 
  SetWildcat : WildCategory (𝓤 ⁺) 𝓤
- SetWildcat = wildcat-make
+ SetWildcat = wildcategory
                        Sets
                        (λ (X , _) (Y , _) → (X → Y))
                        (λ x → x)
@@ -43,7 +46,8 @@ module _ {𝓤 : Universe} where
                        (λ _ → refl)
                        (λ _ _ _ → refl)
 
- open CategoryNotation SetWildcat
+ open WildCategoryNotation SetWildcat
+
 \end{code}
 
 We can now define the precategory of sets.
@@ -81,13 +85,13 @@ be done using SIP.
    ii : (X ≃ Y) ≃ (X , sX) ≅ (Y , sY)
    ii = pi-equiv-to-sum-equiv equiv-equiv-iso
     where
-     qinv-equiv-iso : (f : X → Y) → qinv f ≃ WildCategory.is-iso SetWildcat {X , sX} {Y , sY} f
+     qinv-equiv-iso : (f : X → Y) → qinv f ≃ inverse {_} {_} {_} {X , sX} {Y , sY} f
      qinv-equiv-iso f = forwards , ((backwards , left) , (backwards , right))
       where
-       forwards : qinv f → WildCategory.is-iso SetWildcat {X , sX} {Y , sY} f
+       forwards : qinv f → inverse {_} {_} {_} {X , sX} {Y , sY} f
        forwards (g , lg , rg) = g , (dfunext fe lg , dfunext fe rg)
 
-       backwards : WildCategory.is-iso SetWildcat {X , sX} {Y , sY} f → qinv f
+       backwards : inverse {_} {_} {_} {X , sX} {Y , sY} f → qinv f
        backwards (g , lg , rg) = g , (λ x → ap (λ - → - x) lg) , λ y → ap (λ - → - y) rg
 
        left : (λ x → forwards (backwards x)) ∼ id
@@ -107,12 +111,12 @@ be done using SIP.
         where
          equality : g ＝ g'
          equality = g                    ＝⟨ refl ⟩
-                    (λ x → id (g x))     ＝⟨ inverse _ (fe _ _) (λ x → (gp' (g x))⁻¹) ⟩
-                    (λ x → g' (f (g x))) ＝⟨ inverse _ (fe _ _) (λ x → ap g' (gp x)) ⟩
+                    (λ x → id (g x))     ＝⟨ e-inverse _ (fe _ _) (λ x → (gp' (g x))⁻¹) ⟩
+                    (λ x → g' (f (g x))) ＝⟨ e-inverse _ (fe _ _) (λ x → ap g' (gp x)) ⟩
                     (λ x → g' (id x))    ＝⟨ refl ⟩
                     g' ∎
 
-     equiv-equiv-iso : (f : X → Y) → is-equiv f ≃ WildCategory.is-iso SetWildcat {X , sX} {Y , sY} f
+     equiv-equiv-iso : (f : X → Y) → is-equiv f ≃ {!!}
      equiv-equiv-iso f = ≃-comp (lem' f) (qinv-equiv-iso f)
 
  SetCat : (ua : is-univalent 𝓤)
@@ -123,7 +127,7 @@ be done using SIP.
    h : (a b : obj SetWildcat) → id-to-iso a b ∼ ⌜ lem ua fe a b ⌝
    h (a , sA) b refl = to-Σ-＝ (refl , (to-Σ-＝ (refl , to-×-＝ (Π-is-set fe (λ x → sA _ _) _ _) (Π-is-set fe (λ x → sA _ _) _ _))))
 
-   univalence-property : is-category SetWildcat
+   univalence-property : is-category (SetPrecat fe)
    univalence-property a b = equiv-closed-under-∼ ⌜ lem ua fe a b ⌝ (id-to-iso a b) (pr₂ (lem ua fe a b)) (h a b)
 \end{code}
 
