@@ -1,10 +1,9 @@
 Anna Williams, 13 November 2025
 
-Examples of categories, this includes
+Examples of categories, this includes the following.
 
-* Set
-* SetBased Structures
-* Magma
+ * Set
+ * Magma
 
 \begin{code}
 

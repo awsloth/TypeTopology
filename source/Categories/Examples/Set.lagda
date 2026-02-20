@@ -29,7 +29,6 @@ We first define the WildCategory of Sets
 \begin{code}
 
 module _ {𝓤 : Universe} where
- -- This may need changing
  is-set-explicit : 𝓤 ̇ → 𝓤 ̇
  is-set-explicit A = Π a ꞉ A , Π b ꞉ A , is-prop (a ＝ b)
 
@@ -75,7 +74,7 @@ be done using SIP.
  lem ua fe (X , sX) (Y , sY) = ((X , sX) ＝ (Y , sY))            ≃⟨ i ⟩
                                (X ＝ Y)                          ≃⟨ idtoeq X Y , ua X Y ⟩
                                (X ≃ Y)                           ≃⟨ ii ⟩
-                               (X , sX) ≅ (Y , sY) ■
+                               (X , sX) ≅ (Y , sY)               ■
   where
    i : (X , sX ＝ Y , sY) ≃ (X ＝ Y)
    i = subtype-equiv is-set-explicit (λ _ → Π₂-is-prop fe
@@ -129,5 +128,6 @@ be done using SIP.
 
    univalence-property : is-category (SetPrecat fe)
    univalence-property a b = equiv-closed-under-∼ ⌜ lem ua fe a b ⌝ (id-to-iso a b) (pr₂ (lem ua fe a b)) (h a b)
+
 \end{code}
 
