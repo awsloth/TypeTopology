@@ -53,7 +53,7 @@ module _ {𝓤 𝓥 : Universe}
 
  record DCOMP : ((𝓦 ⊔ 𝓣) ⊔ (𝓤 ⊔ 𝓥))⁺ ̇  where
   field
-   _◦_ : {a b c : obj P}
+   _○_ : {a b c : obj P}
           {g : hom b c}
           {f : hom a b}
           {x : obj[ a ]}
@@ -61,7 +61,7 @@ module _ {𝓤 𝓥 : Universe}
           {z : obj[ c ]}
           (gyz : hom[ g ] y z)
           (fxy : hom[ f ] x y)
-       → hom[ g ○ f ] x z
+       → hom[ g ◦ f ] x z
 
  open DCOMP {{...}} public
 
@@ -74,8 +74,8 @@ module _ {𝓤 𝓥 : Universe}
  open DID {{...}} public
 
  instance
-  dcomp-m : DCOMP
-  _◦_ {{dcomp-m}} = DisplayedPrecategory._◦_ D
+  dcomp-m : DCOMP 
+  _○_ {{dcomp-m}} = DisplayedPrecategory._○_ D
 
 
  instance
@@ -94,7 +94,7 @@ module _ {𝓤 𝓥 : Universe}
                   {x : obj[ a ]}
                   {y : obj[ b ]}
                   (f : hom[ f' ] x y)
-                → f ◦ D-𝒊𝒅
+                → f ○ D-𝒊𝒅
                 ＝⟦ (λ - → hom[ - ] x y) , 𝒊𝒅-is-right-neutral f' ⟧
                   f
 
@@ -103,7 +103,7 @@ module _ {𝓤 𝓥 : Universe}
                  {x : obj[ a ]}
                  {y : obj[ b ]}
                  (f : hom[ f' ] x y)
-               → D-𝒊𝒅 ◦ f
+               → D-𝒊𝒅 ○ f
                ＝⟦ (λ - → hom[ - ] x y) , 𝒊𝒅-is-left-neutral f' ⟧
                  f
   
@@ -118,9 +118,9 @@ module _ {𝓤 𝓥 : Universe}
              {f : hom[ f' ] x y}
              {g : hom[ g' ] y z}
              {h : hom[ h' ] z w}
-           → h ◦ (g ◦ f)
+           → h ○ (g ○ f)
            ＝⟦ (λ - → hom[ - ] x w) , assoc f' g' h' ⟧
-             (h ◦ g) ◦ f
+             (h ○ g) ○ f
 
    D-inverse : {c c' : obj P}
             {d : obj[ c ]}
@@ -161,7 +161,7 @@ module DispPrecatNotation {𝓦 𝓣 : Universe}
 
  instance
   d-comp : DCOMP D
-  _◦_ {{d-comp}} = DisplayedPrecategory._◦_ D
+  _○_ {{d-comp}} = DisplayedPrecategory._○_ D
 
 
  instance

@@ -61,8 +61,8 @@ record DisplayedFunctor {P : Precategory 𝓦 𝓣}
                  {g' : hom b c}
                  {f : hom[ f' ] x y}
                  {g : hom[ g' ] y z}
-               → F₁ (g ◦ f)
+               → F₁ (g ○ f)
                ＝⟦ (λ - → hom[ - ] _ _) , distributivity g' f' ⟧
-                 F₁ g ◦ F₁ f
+                 F₁ g ○ F₁ f
 
 \end{code}

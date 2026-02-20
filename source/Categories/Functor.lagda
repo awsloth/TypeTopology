@@ -47,6 +47,6 @@ record Functor (A : WildCategory 𝓤 𝓥)
   distributivity : {a b c : obj A}
                    (g : hom b c)
                    (f : hom a b)
-                 → F₁ (g ○ f) ＝ F₁ g ○ F₁ f
+                 → F₁ (g ◦ f) ＝ F₁ g ◦ F₁ f
 
 \end{code}

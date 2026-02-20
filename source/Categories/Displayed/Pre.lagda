@@ -66,7 +66,7 @@ record DisplayedPrecategory (𝓦 𝓣 : Universe)
          {x : obj[ c ]}
        → hom[ 𝒊𝒅 ] x x
 
-  _◦_ : {a b c : obj P}
+  _○_ : {a b c : obj P}
          {g : hom b c}
          {f : hom a b}
          {x : obj[ a ]}
@@ -74,7 +74,7 @@ record DisplayedPrecategory (𝓦 𝓣 : Universe)
          {z : obj[ c ]}
          (gyz : hom[ g ] y z)
          (fxy : hom[ f ] x y)
-       → hom[ g ○ f ] x z
+       → hom[ g ◦ f ] x z
 
  private
   hom[-] : {a b : obj P}
@@ -89,14 +89,14 @@ record DisplayedPrecategory (𝓦 𝓣 : Universe)
                           {x : obj[ a ]}
                           {y : obj[ b ]}
                           (f : hom[ f' ] x y)
-                        → f ◦ D-𝒊𝒅 ＝⟦ hom[-] x y , 𝒊𝒅-is-right-neutral f' ⟧ f
+                        → f ○ D-𝒊𝒅 ＝⟦ hom[-] x y , 𝒊𝒅-is-right-neutral f' ⟧ f
 
   D-𝒊𝒅-is-left-neutral : {a b : obj P}
                          {f' : hom a b}
                          {x : obj[ a ]}
                          {y : obj[ b ]}
                          (f : hom[ f' ] x y)
-                       → D-𝒊𝒅 ◦ f ＝⟦ hom[-] x y , 𝒊𝒅-is-left-neutral f' ⟧ f
+                       → D-𝒊𝒅 ○ f ＝⟦ hom[-] x y , 𝒊𝒅-is-left-neutral f' ⟧ f
   
   D-assoc : {a b c d : obj P}
             {f' : hom a b}
@@ -109,9 +109,9 @@ record DisplayedPrecategory (𝓦 𝓣 : Universe)
             {f : hom[ f' ] x y}
             {g : hom[ g' ] y z}
             {h : hom[ h' ] z w}
-          → h ◦ (g ◦ f)
+          → h ○ (g ○ f)
           ＝⟦ hom[-] x w , assoc f' g' h' ⟧
-            (h ◦ g) ◦ f
+            (h ○ g) ○ f
 
 \end{code}
 
@@ -127,8 +127,8 @@ We can now define a displayed version of isomorphism between objects.
            → 𝓣 ̇
  D-inverse {q} {p} {d} {d'} f 𝕗
    = Σ 𝕗⁻¹ ꞉ hom[ ⌞ underlying-morphism-is-isomorphism f ⌟ ] d' d
-     , ((𝕗⁻¹ ◦ 𝕗 ＝⟦ hom[-] d d , i ⟧ D-𝒊𝒅)
-     × (𝕗 ◦ 𝕗⁻¹ ＝⟦ hom[-] d' d' , ii ⟧ D-𝒊𝒅))
+     , ((𝕗⁻¹ ○ 𝕗 ＝⟦ hom[-] d d , i ⟧ D-𝒊𝒅)
+     × (𝕗 ○ 𝕗⁻¹ ＝⟦ hom[-] d' d' , ii ⟧ D-𝒊𝒅))
   where
    i = ⌞ underlying-morphism-is-isomorphism f ⌟-is-left-inverse
    ii = ⌞ underlying-morphism-is-isomorphism f ⌟-is-right-inverse
@@ -155,7 +155,7 @@ the notion of id-to-iso for displayed precategories.
              → d ≅[ id-to-iso p q e ] d'
  D-id-to-iso refl d _ refl = D-𝒊𝒅 , D-𝒊𝒅 , h , h
   where
-   h : D-𝒊𝒅 ◦ D-𝒊𝒅 ＝⟦ hom[-] d d , 𝒊𝒅-is-left-neutral 𝒊𝒅 ⟧ D-𝒊𝒅
+   h : D-𝒊𝒅 ○ D-𝒊𝒅 ＝⟦ hom[-] d d , 𝒊𝒅-is-left-neutral 𝒊𝒅 ⟧ D-𝒊𝒅
    h = D-𝒊𝒅-is-left-neutral D-𝒊𝒅
 
 \end{code}

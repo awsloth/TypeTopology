@@ -13,7 +13,6 @@ Examples of categories, this includes
 module Categories.Examples.index where
 
 import Categories.Examples.Set
-import Categories.Examples.SetBased
 import Categories.Examples.Magma
 
 \end{code}

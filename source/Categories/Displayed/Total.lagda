@@ -43,7 +43,7 @@ TotalPrecategory {𝓤} {𝓥} {𝓦} {𝓨} {P} D = (totalwildcategory
                        (Σ c ꞉ obj P , obj[ c ])
                        (λ (a , x) (b , y) → Σ f ꞉ hom a b , hom[ f ] x y)
                        (𝒊𝒅 , D-𝒊𝒅)
-                       (λ (g' , g) (f' , f) → g' ○ f' , g ◦ f)
+                       (λ (g' , g) (f' , f) → g' ◦ f' , g ○ f)
                        (λ (f' , f) → to-Σ-＝ (𝒊𝒅-is-left-neutral f'
                                    , Idtofun (did _ _)
                                      (D-𝒊𝒅-is-left-neutral f)))
@@ -62,7 +62,7 @@ TotalPrecategory {𝓤} {𝓥} {𝓦} {𝓨} {P} D = (totalwildcategory
 
 Total category
 
-\begin{code}
+begin{code}
 
 TotalCategory : (C : Category 𝓤 𝓥) (D : DisplayedCategory 𝓦 𝓣 ⟨ C ⟩) → Category (𝓤 ⊔ 𝓦) (𝓥 ⊔ 𝓣)
 TotalCategory C D = TotalPrecategory ⟨ D ⟩ , total-is-category

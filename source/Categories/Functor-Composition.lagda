@@ -52,10 +52,10 @@ _F∘_ {_} {_} {_} {_} {_} {_} {A} {B} {C} G' F' = combined-functor
   f-distrib : {a b c : obj A}
               (g : hom b c)
               (f : hom a b)
-            → G (F (g ○ f)) ＝ G (F g) ○ G (F f)
-  f-distrib g f = G (F (g ○ f))     ＝⟨ i  ⟩
-                  G (F g ○ F f)     ＝⟨ ii ⟩
-                  G (F g) ○ G (F f) ∎
+            → G (F (g ◦ f)) ＝ G (F g) ◦ G (F f)
+  f-distrib g f = G (F (g ◦ f))     ＝⟨ i  ⟩
+                  G (F g ◦ F f)     ＝⟨ ii ⟩
+                  G (F g) ◦ G (F f) ∎
    where
     i  = ap G (distributivity g f)
     ii = distributivity (F g) (F f)

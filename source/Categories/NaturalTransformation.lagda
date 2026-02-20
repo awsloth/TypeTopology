@@ -46,6 +46,6 @@ record NaturalTransformation {A : WildCategory 𝓤 𝓥}
  field
   natural : {a b : obj A}
             (f : hom a b)
-          → G f ○ γ a ＝ γ b ○ F f
+          → G f ◦ γ a ＝ γ b ◦ F f
 
 \end{code}

@@ -93,6 +93,7 @@ module _ {𝓤 : Universe} (fe : Fun-Ext) where
                            λ y → S _ _
 
  open WildCategoryNotation MagmaWildcat
+
 \end{code}
 
 We now show that this is a precategory
