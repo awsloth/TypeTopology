@@ -40,8 +40,8 @@ module _ {𝓤 : Universe} (fe : Fun-Ext) where
   where
    magma-hom : (a b : Magma) → 𝓤 ̇
    magma-hom (X , _·_ , _)
-             (Y , _*_ , _) = Σ f ꞉ (X → Y) , ((x y : X)
-                                             → f (x · y) ＝ (f x) * (f y))
+             (Y , _*_ , _)
+    = Σ f ꞉ (X → Y) , ((x y : X) → f (x · y) ＝ f x * f y)
 
    magma-id : {a : Magma} → magma-hom a a
    magma-id = id , λ x y → refl
@@ -54,12 +54,12 @@ module _ {𝓤 : Universe} (fe : Fun-Ext) where
               {Y , _*_ , _}
               {Z , _∙_ , _}
               (f , fp)
-              (g , gp) = (λ x → f (g x)) , property-comp
+              (g , gp) = f ∘ g , property-comp
     where
-     property-comp : (x y : X) → f (g (x · y)) ＝ (f (g x) ∙ f (g y))
-     property-comp x y = f (g (x · y))         ＝⟨ ap f (gp x y) ⟩
-                         f ((g x) * (g y))     ＝⟨ fp (g x) (g y) ⟩
-                         (f (g x)) ∙ (f (g y)) ∎
+     property-comp : (x y : X) → (f ∘ g) (x · y) ＝ (f ∘ g) x ∙ (f ∘ g) y
+     property-comp x y = (f ∘ g) (x · y)       ＝⟨ ap f (gp x y) ⟩
+                         f (g x * g y)         ＝⟨ fp (g x) (g y) ⟩
+                         (f ∘ g) x ∙ (f ∘ g) y ∎
 
    magma-l-id : {a b : Magma}
                 (f : magma-hom a b)
@@ -105,9 +105,8 @@ We now show that this is a precategory
   where
    is-pre : is-precategory MagmaWildcat
    is-pre (_ , _ , sX) (_ , _ , sY) = Σ-is-set (Π-is-set fe (λ _ → sY))
-                                                λ f → Π-is-set fe
-                                                 λ x → Π-is-set fe
-                                                  λ y → props-are-sets sY
+                                                λ f → Π₂-is-set fe
+                                                  λ x y → props-are-sets sY
 
 \end{code}
 
