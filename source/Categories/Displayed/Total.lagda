@@ -45,13 +45,13 @@ TotalPrecategory {𝓤} {𝓥} {𝓦} {𝓨} {P} D = (totalwildcategory
                        (𝒊𝒅 , D-𝒊𝒅)
                        (λ (g , 𝕘) (f , 𝕗) → g ◦ f , 𝕘 ○ 𝕗)
                        (λ (f , 𝕗) → to-Σ-＝ (𝒊𝒅-is-left-neutral f
-                                   , Idtofun (dep-id _ _)
-                                     (D-𝒊𝒅-is-left-neutral 𝕗)))
+                                            , Idtofun (dep-id _ _)
+                                               (D-𝒊𝒅-is-left-neutral 𝕗)))
                        (λ (f , 𝕗) → to-Σ-＝ (𝒊𝒅-is-right-neutral f
-                                   , Idtofun (dep-id _ _)
-                                     (D-𝒊𝒅-is-right-neutral 𝕗)))
+                                            , Idtofun (dep-id _ _)
+                                               (D-𝒊𝒅-is-right-neutral 𝕗)))
                        (λ f g h → to-Σ-＝ (assoc _ _ _
-                                , Idtofun (dep-id _ _) D-assoc))
+                                          , Idtofun (dep-id _ _) D-assoc))
    where
     dep-id = dependent-Id-via-transport
 

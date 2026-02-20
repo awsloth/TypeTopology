@@ -1,6 +1,6 @@
 Anna Williams, 28 October 2025
 
-Formalisation of displayed categories using univalent foundations. Following the
+Formalisation of displayed categories using univalent foundations, following the
 work of Ahrens and Lumsdaine [1].
 
 [1] Ahrens, Benedikt and Peter LeFanu Lumsdaine (Mar. 2019). “Displayed

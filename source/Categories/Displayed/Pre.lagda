@@ -39,9 +39,9 @@ More precisely, a displayed precategory over a precategory P consists of,
 
 Such that the following hold
 
-- f ○ id = id
-- id ○ f = f
-- f ○ (g ○ h) = (f ○ g) ○ h 
+ - f ○ id = id
+ - id ○ f = f
+ - f ○ (g ○ h) = (f ○ g) ○ h 
 
 \begin{code}
 
@@ -80,7 +80,8 @@ record DisplayedPrecategory (𝓦 𝓣 : Universe)
   hom[-] : {a b : obj P}
            (x : obj[ a ])
            (y : obj[ b ])
-         → hom a b → 𝓣 ̇
+         → hom a b
+         → 𝓣 ̇
   hom[-] x y = λ - → hom[ - ] x y
 
  field
@@ -139,23 +140,5 @@ We can now define a displayed version of isomorphism between objects.
           (y : obj[ b ])
         → 𝓣 ̇
  x ≅[ f ] y = Σ 𝕗 ꞉ hom[ ⌜ f ⌝ ] x y , D-inverse f 𝕗
-       
-\end{code}
-
-Following the definition of isomorphism, as with categories we can now define
-the notion of id-to-iso for displayed precategories.
-
-\begin{code}
-
- D-id-to-iso : {a b : obj P}
-               (e : a ＝ b)
-               (x : obj[ a ])
-               (y : obj[ b ])
-             → x ＝⟦ obj[_] , e ⟧ y
-             → x ≅[ id-to-iso a b e ] y
- D-id-to-iso refl x _ refl = D-𝒊𝒅 , D-𝒊𝒅 , h , h
-  where
-   h : D-𝒊𝒅 ○ D-𝒊𝒅 ＝⟦ hom[-] x x , 𝒊𝒅-is-left-neutral 𝒊𝒅 ⟧ D-𝒊𝒅
-   h = D-𝒊𝒅-is-left-neutral D-𝒊𝒅
 
 \end{code}

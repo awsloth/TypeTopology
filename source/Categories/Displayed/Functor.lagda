@@ -21,7 +21,7 @@ module Categories.Displayed.Functor where
 
 \end{code}
 
-We define displayed functors analagously to functors, but analygously to 
+We define displayed functors analagously to functors, but analogously to 
 displayed categories we work with some "base" functor. Using this functor, we
 map between the base precategories which lie below the displayed precategories.
 

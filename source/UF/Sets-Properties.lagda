@@ -113,7 +113,7 @@ being-set-is-prop {𝓤} fe {X} = h
 
 \end{code}
 
-Added 20th February 2026
+Added 20th February 2026 by Anna Williams
 
 \begin{code}
 
