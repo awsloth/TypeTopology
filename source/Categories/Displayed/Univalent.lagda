@@ -7,6 +7,7 @@ Definition of univalent displayed category.
 {-# OPTIONS --safe --without-K #-}
 
 open import MLTT.Spartan
+open import UF.DependentEquality
 open import UF.Equiv
 open import UF.Equiv-FunExt
 open import UF.FunExt
@@ -23,13 +24,32 @@ module Categories.Displayed.Univalent where
 
 \end{code}
 
-We define the property of being a displayed category akin to that of being a
-category.
+Following the definition of isomorphism, as with categories we can now define
+the notion of id-to-iso for displayed precategories.
 
 \begin{code}
 
 module _ {P : Precategory 𝓤 𝓥} (D : DisplayedPrecategory 𝓦 𝓣 P) where
+ open PrecategoryNotation P
  open DispPrecatNotation D
+
+ D-id-to-iso : {a b : obj P}
+               (e : a ＝ b)
+               (x : obj[ a ])
+               (y : obj[ b ])
+             → x ＝⟦ obj[_] , e ⟧ y
+             → x ≅[ id-to-iso a b e ] y
+ D-id-to-iso refl x _ refl = D-𝒊𝒅 , D-𝒊𝒅 , h , h
+  where
+   h : D-𝒊𝒅 ○ D-𝒊𝒅 ＝⟦ (λ - → hom[ - ] x x) , 𝒊𝒅-is-left-neutral 𝒊𝒅 ⟧ D-𝒊𝒅
+   h = D-𝒊𝒅-is-left-neutral D-𝒊𝒅
+
+\end{code}
+
+We define the property of being a displayed category akin to that of being a
+category.
+
+\begin{code}
 
  is-displayed-category : (𝓤 ⊔ 𝓦 ⊔ 𝓣) ̇
  is-displayed-category = {a b : obj P}
@@ -56,7 +76,7 @@ module _ {P : Precategory 𝓤 𝓥} (D : DisplayedPrecategory 𝓦 𝓣 P) wher
 
 
 We can now define displayed categories. These are exactly precategories such
-that the map, D-id-to-iso is an eqivalence.
+that the map, D-id-to-iso is an equivalence.
 
 \begin{code}
 

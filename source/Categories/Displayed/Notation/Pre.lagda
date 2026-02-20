@@ -134,13 +134,6 @@ module _ {𝓤 𝓥 : Universe}
             (f : a ≅ b)
             (y : obj[ b ])
           → 𝓥 ̇
-   D-id-to-iso : {a b : obj P}
-                 (e : a ＝ b)
-                 (x : obj[ a ])
-                 (y : obj[ b ])
-               → x ＝⟦ obj[_] , e ⟧ y
-               → x ≅[ id-to-iso a b e ] y
-
  open DNotation {{...}} public
 
 
@@ -175,7 +168,6 @@ module DispPrecatNotation {𝓦 𝓣 : Universe}
   D-assoc {{d-notation}} = DisplayedPrecategory.D-assoc D
   D-inverse {{d-notation}} = DisplayedPrecategory.D-inverse D
   _≅[_]_ {{d-notation}} = DisplayedPrecategory._≅[_]_ D
-  D-id-to-iso {{d-notation}} = DisplayedPrecategory.D-id-to-iso D
   
 
 \end{code}
