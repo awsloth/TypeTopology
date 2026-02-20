@@ -42,8 +42,8 @@ record FUNNOTATION {A : WildCategory 𝓤 𝓥}
   distributivity : {a b c : obj A}
                 (g : hom b c)
                 (f : hom a b)
-              → Functor.F₁ F (g ○ f)
-              ＝ Functor.F₁ F g ○ Functor.F₁ F f
+              → Functor.F₁ F (g ◦ f)
+              ＝ Functor.F₁ F g ◦ Functor.F₁ F f
 
 open FUNNOTATION {{...}} public
 

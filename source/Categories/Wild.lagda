@@ -21,17 +21,17 @@ of a category, which is as follows.
 
  * for each object A : obj, an identity homomorphism id A : hom A A, and
 
- * a composition operation, ○, which for objects A B C : obj and homomorphisms
-   f : hom A B, g : hom B C gives a new homomorphism, g ○ f : hom A C.
+ * a composition operation, ◦, which for objects A B C : obj and homomorphisms
+   f : hom A B, g : hom B C gives a new homomorphism, g ◦ f : hom A C.
 
 Such that the following axioms hold.
 
- * left-id: for objects A B : obj and morphism f : hom A B, f ○ id ＝ f,
+ * left-id: for objects A B : obj and morphism f : hom A B, f ◦ id ＝ f,
 
- * right-id: for objects A B : obj and morphism f : hom A B, id ○ f ＝ f, and
+ * right-id: for objects A B : obj and morphism f : hom A B, id ◦ f ＝ f, and
 
  * associativity: for objects A B C D : obj and morphisms f : hom A B,
-                  g : hom B C, h : hom C D, h ○ (g ○ f) ＝ (h ○ g) ○ f.
+                  g : hom B C, h : hom C D, h ◦ (g ◦ f) ＝ (h ◦ g) ◦ f.
 
 
 [1] Capriotti, Paolo and Nicolai Kraus (2017). Univalent Higher Categories via
@@ -46,17 +46,17 @@ record WildCategory (𝓤 𝓥 : Universe) : (𝓤 ⊔ 𝓥)⁺ ̇  where
   hom : obj → obj → 𝓥 ̇
   𝒊𝒅 : {a : obj} → hom a a
   
-  _○_ : {a b c : obj} → hom b c → hom a b → hom a c
+  _◦_ : {a b c : obj} → hom b c → hom a b → hom a c
 
-  𝒊𝒅-is-left-neutral : {a b : obj} (f : hom a b) → 𝒊𝒅 ○ f ＝ f
+  𝒊𝒅-is-left-neutral : {a b : obj} (f : hom a b) → 𝒊𝒅 ◦ f ＝ f
   
-  𝒊𝒅-is-right-neutral : {a b : obj} (f : hom a b) → f ○ 𝒊𝒅 ＝ f
+  𝒊𝒅-is-right-neutral : {a b : obj} (f : hom a b) → f ◦ 𝒊𝒅 ＝ f
 
   assoc : {a b c d : obj}
           (f : hom a b)
           (g : hom b c)
           (h : hom c d)
-        → h ○ (g ○ f) ＝ (h ○ g) ○ f
+        → h ◦ (g ◦ f) ＝ (h ◦ g) ◦ f
 
 \end{code}
 
@@ -69,7 +69,7 @@ isomorphisms between objects of a wild category.
 \begin{code}
 
  inverse : {a b : obj} (f : hom a b) → 𝓥 ̇
- inverse {a} {b} f = Σ f⁻¹ ꞉ hom b a , (f⁻¹ ○ f ＝ 𝒊𝒅) × (f ○ f⁻¹ ＝ 𝒊𝒅)
+ inverse {a} {b} f = Σ f⁻¹ ꞉ hom b a , (f⁻¹ ◦ f ＝ 𝒊𝒅) × (f ◦ f⁻¹ ＝ 𝒊𝒅)
 
  ⌞_⌟ : {a b : obj}
          {f : hom a b}
@@ -80,13 +80,13 @@ isomorphisms between objects of a wild category.
  ⌞_⌟-is-left-inverse : {a b : obj}
                          {f : hom a b}
                          (𝕗⁻¹ : inverse f)
-                       → ⌞ 𝕗⁻¹ ⌟ ○ f ＝ 𝒊𝒅
+                       → ⌞ 𝕗⁻¹ ⌟ ◦ f ＝ 𝒊𝒅
  ⌞ 𝕗 ⌟-is-left-inverse = pr₁ (pr₂ 𝕗)
 
  ⌞_⌟-is-right-inverse : {a b : obj}
                           {f : hom a b}
                           (𝕗⁻¹ : inverse f)
-                        → f ○ ⌞ 𝕗⁻¹ ⌟ ＝ 𝒊𝒅
+                        → f ◦ ⌞ 𝕗⁻¹ ⌟ ＝ 𝒊𝒅
  ⌞ 𝕗 ⌟-is-right-inverse = pr₂ (pr₂ 𝕗)
 
  _≅_ : (a b : obj) → 𝓥 ̇
@@ -100,7 +100,7 @@ isomorphisms between objects of a wild category.
  underlying-morphism-is-isomorphism
   : {a b : obj}
     (f : a ≅ b)
-  → Σ f⁻¹ ꞉ hom b a , (f⁻¹ ○ ⌜ f ⌝ ＝ 𝒊𝒅) × (⌜ f ⌝ ○ f⁻¹ ＝ 𝒊𝒅)
+  → Σ f⁻¹ ꞉ hom b a , (f⁻¹ ◦ ⌜ f ⌝ ＝ 𝒊𝒅) × (⌜ f ⌝ ◦ f⁻¹ ＝ 𝒊𝒅)
  underlying-morphism-is-isomorphism = pr₂
 
 \end{code}
@@ -114,16 +114,16 @@ We can show that two inverses for a given isomorphism must be equal.
                        (g h : inverse f)
                      → ⌞ g ⌟ ＝ ⌞ h ⌟
  at-most-one-inverse {a} {b} {f} g h = ⌞ g ⌟               ＝⟨ i ⟩
-                                       ⌞ g ⌟ ○ 𝒊𝒅           ＝⟨ ii ⟩
-                                       ⌞ g ⌟ ○ (f ○ ⌞ h ⌟) ＝⟨ iii ⟩
-                                       (⌞ g ⌟ ○ f) ○ ⌞ h ⌟ ＝⟨ iv ⟩
-                                       𝒊𝒅 ○ ⌞ h ⌟          ＝⟨ v ⟩
+                                       ⌞ g ⌟ ◦ 𝒊𝒅           ＝⟨ ii ⟩
+                                       ⌞ g ⌟ ◦ (f ◦ ⌞ h ⌟) ＝⟨ iii ⟩
+                                       (⌞ g ⌟ ◦ f) ◦ ⌞ h ⌟ ＝⟨ iv ⟩
+                                       𝒊𝒅 ◦ ⌞ h ⌟          ＝⟨ v ⟩
                                        ⌞ h ⌟               ∎
   where
    i   = (𝒊𝒅-is-right-neutral ⌞ g ⌟)⁻¹
-   ii  = ap (⌞ g ⌟ ○_) (⌞ h ⌟-is-right-inverse)⁻¹
+   ii  = ap (⌞ g ⌟ ◦_) (⌞ h ⌟-is-right-inverse)⁻¹
    iii = assoc _ _ _
-   iv  = ap (_○ ⌞ h ⌟) ⌞ g ⌟-is-left-inverse
+   iv  = ap (_◦ ⌞ h ⌟) ⌞ g ⌟-is-left-inverse
    v   = 𝒊𝒅-is-left-neutral ⌞ h ⌟
 
 \end{code}

@@ -34,15 +34,15 @@ record NatNotation {A : WildCategory 𝓤 𝓥}
  open FunctorNotation G' renaming (functor-map to G ; fobj to Gobj)
 
  field
-  gamma : (a : obj A) → hom (F {{Fobj}} a) (G {{Gobj}} a)
+  transf : (a : obj A) → hom (F {{Fobj}} a) (G {{Gobj}} a)
  
  private
-  γ = gamma
+  γ = transf
 
  field
   natural : {a b : obj A}
             (f : hom a b)
-          → G f ○ γ a ＝ γ b ○ F f
+          → G f ◦ γ a ＝ γ b ◦ F f
 
 open NatNotation {{...}} public
 
@@ -57,7 +57,7 @@ module NaturalTNotation {A : WildCategory 𝓤 𝓥}
 
  instance
   nat-notation : NatNotation μ
-  gamma {{nat-notation}} = NaturalTransformation.gamma μ
+  transf {{nat-notation}} = NaturalTransformation.transf μ
   natural {{nat-notation}} = NaturalTransformation.natural μ
 
 \end{code}
