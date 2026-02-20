@@ -116,7 +116,7 @@ be done using SIP.
                     (λ x → g' (id x))    ＝⟨ refl ⟩
                     g' ∎
 
-     equiv-equiv-iso : (f : X → Y) → is-equiv f ≃ {!!}
+     equiv-equiv-iso : (f : X → Y) → is-equiv f ≃ inverse {_} {_} {_} {X , sX} {Y , sY} f
      equiv-equiv-iso f = ≃-comp (lem' f) (qinv-equiv-iso f)
 
  SetCat : (ua : is-univalent 𝓤)
