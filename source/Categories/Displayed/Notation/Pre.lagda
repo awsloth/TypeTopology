@@ -10,7 +10,6 @@ open import MLTT.Spartan
 open import UF.Sets
 open import UF.DependentEquality
 open import Categories.Pre
-open import Categories.Notation.Wild
 open import Categories.Notation.Pre
 open import Categories.Displayed.Pre
 
@@ -76,7 +75,6 @@ module _ {𝓤 𝓥 : Universe}
  instance
   dcomp-m : DCOMP 
   _○_ {{dcomp-m}} = DisplayedPrecategory._○_ D
-
 
  instance
   d-id-m : DID
@@ -144,7 +142,6 @@ module DispPrecatNotation {𝓦 𝓣 : Universe}
   d-obj : DOBJ D
   obj[_] {{d-obj}} = DisplayedPrecategory.obj[_] D
   
-
  instance
   d-hom : DHOM D
   hom[_] {{d-hom}} = DisplayedPrecategory.hom[_] D
@@ -157,7 +154,6 @@ module DispPrecatNotation {𝓦 𝓣 : Universe}
   d-comp : DCOMP D
   _○_ {{d-comp}} = DisplayedPrecategory._○_ D
 
-
  instance
   d-notation : DNotation D
   hom[-]-is-set {{d-notation}} = DisplayedPrecategory.hom[-]-is-set D
@@ -169,7 +165,4 @@ module DispPrecatNotation {𝓦 𝓣 : Universe}
   D-inverse {{d-notation}} = DisplayedPrecategory.D-inverse D
   _≅[_]_ {{d-notation}} = DisplayedPrecategory._≅[_]_ D
   
-
 \end{code}
-
-

@@ -16,7 +16,6 @@ open import UF.Subsingletons-FunExt
 open import Notation.UnderlyingType
 open import Categories.Pre
 open import Categories.Notation.Pre
-open import Categories.Notation.Univalent
 open import Categories.Displayed.Pre
 open import Categories.Displayed.Notation.Pre
 
@@ -58,7 +57,6 @@ category.
                          (y : obj[ b ])
                        → is-equiv (D-id-to-iso e x y)
 
-
  is-displayed-category-is-prop : (fe : Fun-Ext)
                                → is-prop (is-displayed-category)
  is-displayed-category-is-prop fe = implicit-Π₂-is-prop fe
@@ -73,7 +71,6 @@ category.
                                      (D-id-to-iso e x y)
 
 \end{code}
-
 
 We can now define displayed categories. These are exactly precategories such
 that the map, D-id-to-iso is an equivalence.
@@ -97,7 +94,6 @@ instance
    : {P : Precategory 𝓦 𝓣}
    → Underlying-Type (DisplayedCategory 𝓤 𝓥 P) (DisplayedPrecategory 𝓤 𝓥 P)
   ⟨_⟩ {{underlying-disp-precat-of-disp-cat}} (D , _) = D
-
 
 D-id-to-iso-is-equiv : {P : Precategory 𝓦 𝓣}
                        (D : DisplayedCategory 𝓤 𝓥 P)

@@ -8,13 +8,11 @@ Definition of a displayed category.
 
 open import MLTT.Spartan
 open import UF.DependentEquality
-open import UF.Equiv hiding (_≅_ ; inverse ; ⌜_⌝)
 open import UF.Sets
 open import Categories.Pre
 open import Categories.Notation.Pre
 
 module Categories.Displayed.Pre where
-
 
 \end{code}
 
@@ -35,7 +33,6 @@ More precisely, a displayed precategory over a precategory P consists of,
    y : obj[b], z : obj[c], a function
    
    ○ : hom[g] y z → hom[f] x y → hom[f ◦ g] x z.
-
 
 Such that the following hold
 

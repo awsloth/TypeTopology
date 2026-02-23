@@ -5,16 +5,13 @@ Anna Williams 14 February 2026
 {-# OPTIONS --safe --without-K #-}
 
 open import MLTT.Spartan
-open import Notation.UnderlyingType
 open import UF.Base
 open import UF.Sets-Properties
 open import UF.DependentEquality
 open import Categories.Wild
 open import Categories.Pre
-open import Categories.Univalent
 open import Categories.Notation.Pre
 open import Categories.Displayed.Pre
-open import Categories.Displayed.Univalent
 open import Categories.Displayed.Notation.Pre
 
 module Categories.Displayed.Total where

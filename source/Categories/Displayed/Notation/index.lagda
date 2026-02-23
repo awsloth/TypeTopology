@@ -9,7 +9,7 @@ functors.
 
 module Categories.Displayed.Notation.index where
 
-open import Categories.Displayed.Notation.Pre
-open import Categories.Displayed.Notation.Univalent
+import Categories.Displayed.Notation.Pre
+import Categories.Displayed.Notation.Univalent
 
 \end{code}
