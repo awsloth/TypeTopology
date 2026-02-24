@@ -73,7 +73,7 @@ category.
 \end{code}
 
 We can now define displayed categories. These are exactly precategories such
-that the map, D-id-to-iso is an equivalence.
+that the map D-id-to-iso is an equivalence.
 
 \begin{code}
 

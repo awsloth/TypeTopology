@@ -29,14 +29,14 @@ TotalPrecategory : {𝓦 𝓨 : Universe}
                    {P : Precategory 𝓤 𝓥}
                    (D : DisplayedPrecategory 𝓦 𝓨 P)
                  → Precategory (𝓤 ⊔ 𝓦) (𝓥 ⊔ 𝓨)
-TotalPrecategory {𝓤} {𝓥} {𝓦} {𝓨} {P} D = (totalwildcategory
+TotalPrecategory {𝓤} {𝓥} {𝓦} {𝓨} {P} D = (total-wild-category
                                           , total-is-precategory)
  where
   open PrecategoryNotation P
   open DispPrecatNotation D
 
-  totalwildcategory : WildCategory (𝓤 ⊔ 𝓦) (𝓥 ⊔ 𝓨)
-  totalwildcategory = wildcategory
+  total-wild-category : WildCategory (𝓤 ⊔ 𝓦) (𝓥 ⊔ 𝓨)
+  total-wild-category = wildcategory
                        (Σ p ꞉ obj P , obj[ p ])
                        (λ (a , x) (b , y) → Σ f ꞉ hom a b , hom[ f ] x y)
                        (𝒊𝒅 , D-𝒊𝒅)
@@ -52,7 +52,7 @@ TotalPrecategory {𝓤} {𝓥} {𝓦} {𝓨} {P} D = (totalwildcategory
    where
     dep-id = dependent-Id-via-transport
 
-  total-is-precategory : is-precategory totalwildcategory
+  total-is-precategory : is-precategory total-wild-category
   total-is-precategory _ _ = Σ-is-set (hom-is-set P) (λ _ → hom[-]-is-set)
 
 \end{code}
