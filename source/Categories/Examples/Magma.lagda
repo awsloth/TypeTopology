@@ -231,8 +231,9 @@ We show that Magmas have univalence
    right (f , e@((g , gp) , (g' , gp')) , fp) = to-Σ-＝ (refl
                                                      , (to-×-＝ equiv-eq refl))
     where
-     equiv-eq = (to-×-＝ (to-subtype-＝ (λ p → Π-is-prop fe λ y → sB) refl)
-                         (to-subtype-＝ (λ p → Π-is-prop fe λ y → sA) (inv-eq e)))
+     equiv-eq = (to-×-＝
+                 (to-subtype-＝ (λ p → Π-is-prop fe λ y → sB) refl)
+                 (to-subtype-＝ (λ p → Π-is-prop fe λ y → sA) (inv-eq e)))
 
  characterization-of-magma-＝ : is-univalent 𝓤
                              → (A B : Magma)

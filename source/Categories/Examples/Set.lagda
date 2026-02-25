@@ -71,10 +71,10 @@ be done using SIP.
        (fe : Fun-Ext)
        (A B : Sets)
      → (A ＝ B) ≃ (A ≅ B)
- lem ua fe (X , sX) (Y , sY) = ((X , sX) ＝ (Y , sY))            ≃⟨ i ⟩
-                               (X ＝ Y)                          ≃⟨ idtoeq X Y , ua X Y ⟩
-                               (X ≃ Y)                           ≃⟨ ii ⟩
-                               (X , sX) ≅ (Y , sY)               ■
+ lem ua fe (X , sX) (Y , sY) = ((X , sX) ＝ (Y , sY)) ≃⟨ i ⟩
+                               (X ＝ Y)               ≃⟨ idtoeq X Y , ua X Y ⟩
+                               (X ≃ Y)                ≃⟨ ii ⟩
+                               (X , sX) ≅ (Y , sY)    ■
   where
    i : (X , sX ＝ Y , sY) ≃ (X ＝ Y)
    i = subtype-equiv is-set-explicit (λ _ → Π₂-is-prop fe
@@ -84,38 +84,54 @@ be done using SIP.
    ii : (X ≃ Y) ≃ (X , sX) ≅ (Y , sY)
    ii = pi-equiv-to-sum-equiv equiv-equiv-iso
     where
-     qinv-equiv-iso : (f : X → Y) → qinv f ≃ inverse {_} {_} {_} {X , sX} {Y , sY} f
+     qinv-equiv-iso : (f : X → Y)
+                    → qinv f ≃ inverse {_} {_} {_} {X , sX} {Y , sY} f
      qinv-equiv-iso f = forwards , ((backwards , left) , (backwards , right))
       where
        forwards : qinv f → inverse {_} {_} {_} {X , sX} {Y , sY} f
        forwards (g , lg , rg) = g , (dfunext fe lg , dfunext fe rg)
 
        backwards : inverse {_} {_} {_} {X , sX} {Y , sY} f → qinv f
-       backwards (g , lg , rg) = g , (λ x → ap (λ - → - x) lg) , λ y → ap (λ - → - y) rg
+       backwards (g , lg , rg) = g
+                               , (λ x → ap (λ - → - x) lg)
+                               , λ y → ap (λ - → - y) rg
 
        left : (λ x → forwards (backwards x)) ∼ id
-       left (g , lg , rg) = to-Σ-＝ (refl , (to-×-＝ (Π-is-set fe (λ x → sX _ _) _ _) (Π-is-set fe (λ y → sY _ _) _ _)))
+       left (g , lg , rg) = to-Σ-＝ (refl
+                                  , (to-×-＝ (Π-is-set fe (λ x → sX _ _) _ _)
+                                             (Π-is-set fe (λ y → sY _ _) _ _)))
 
        right : (λ x → backwards (forwards x)) ∼ id
-       right (g , lg , rg) = to-Σ-＝ (refl , (to-×-＝ (dfunext fe (λ x → sX _ _ _ _)) (dfunext fe (λ y → sY _ _ _ _))))
+       right (g , lg , rg) = to-Σ-＝ (refl
+                                   , (to-×-＝ (dfunext fe (λ x → sX _ _ _ _))
+                                              (dfunext fe (λ y → sY _ _ _ _))))
 
      lem' : (f : X → Y) → is-equiv f ≃ qinv f
-     lem' f = (equivs-are-qinvs f) , (((qinvs-are-equivs f) , left) , (qinvs-are-equivs f , right))
+     lem' f = (equivs-are-qinvs f)
+            , (((qinvs-are-equivs f) , left)
+            , (qinvs-are-equivs f , right))
       where
        left : (λ x → equivs-are-qinvs f (qinvs-are-equivs f x)) ∼ (λ x → x)
-       left e@(g , gl , gr) = to-Σ-＝ (refl , (to-×-＝ (dfunext fe (λ x → sX _ _ _ _)) refl))
+       left e@(g , gl , gr) = to-Σ-＝ (refl
+                                    , (to-×-＝ (dfunext fe (λ x → sX _ _ _ _))
+                                               refl))
 
        right : (λ x → qinvs-are-equivs f (equivs-are-qinvs f x)) ∼ (λ x → x)
-       right e@((g , gp) , (g' , gp')) = to-×-＝ refl (to-Σ-＝ (equality , (dfunext fe λ x → sX _ _ _ _)))
+       right e@((g , gp) , (g' , gp'))
+        = to-×-＝ refl (to-Σ-＝ (equality , (dfunext fe λ x → sX _ _ _ _)))
         where
          equality : g ＝ g'
          equality = g                    ＝⟨ refl ⟩
-                    (λ x → id (g x))     ＝⟨ e-inverse _ (fe _ _) (λ x → (gp' (g x))⁻¹) ⟩
-                    (λ x → g' (f (g x))) ＝⟨ e-inverse _ (fe _ _) (λ x → ap g' (gp x)) ⟩
+                    (λ x → id (g x))     ＝⟨ i ⟩
+                    (λ x → g' (f (g x))) ＝⟨ ii ⟩
                     (λ x → g' (id x))    ＝⟨ refl ⟩
                     g' ∎
+          where
+           i = e-inverse _ (fe _ _) (λ x → (gp' (g x))⁻¹)
+           ii = e-inverse _ (fe _ _) (λ x → ap g' (gp x))
 
-     equiv-equiv-iso : (f : X → Y) → is-equiv f ≃ inverse {_} {_} {_} {X , sX} {Y , sY} f
+     equiv-equiv-iso : (f : X → Y)
+                     → is-equiv f ≃ inverse {_} {_} {_} {X , sX} {Y , sY} f
      equiv-equiv-iso f = ≃-comp (lem' f) (qinv-equiv-iso f)
 
  SetCat : (ua : is-univalent 𝓤)
@@ -124,10 +140,18 @@ be done using SIP.
  SetCat ua fe = SetPrecat fe , univalence-property
   where
    h : (a b : obj SetWildcat) → id-to-iso a b ∼ ⌜ lem ua fe a b ⌝
-   h (a , sA) b refl = to-Σ-＝ (refl , (to-Σ-＝ (refl , to-×-＝ (Π-is-set fe (λ x → sA _ _) _ _) (Π-is-set fe (λ x → sA _ _) _ _))))
+   h (a , sA) b refl
+    = to-Σ-＝ (refl
+            , (to-Σ-＝ (refl
+                     , to-×-＝ (Π-is-set fe (λ x → sA _ _) _ _)
+                               (Π-is-set fe (λ x → sA _ _) _ _))))
 
    univalence-property : is-category (SetPrecat fe)
-   univalence-property a b = equiv-closed-under-∼ ⌜ lem ua fe a b ⌝ (id-to-iso a b) (pr₂ (lem ua fe a b)) (h a b)
+   univalence-property a b
+    = equiv-closed-under-∼ ⌜ lem ua fe a b ⌝
+                           (id-to-iso a b)
+                           (pr₂ (lem ua fe a b))
+                           (h a b)
 
 \end{code}
 
