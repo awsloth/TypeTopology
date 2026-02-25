@@ -17,10 +17,67 @@ open import UF.FunExt
 open import UF.Sets
 open import UF.Sets-Properties
 open import UF.Subsingletons
+open import UF.Subsingletons-Properties
 open import UF.Subsingletons-FunExt
 open import UF.Univalence
 
 module Categories.Examples.Set where
+
+\end{code}
+
+We show that for subtypes, equality on subtypes is equivalent
+to equality on the base type.
+
+\begin{code}
+
+subtype-equiv : {X : 𝓤 ̇ }
+                (P : X → 𝓥 ̇ )
+              → (Π x ꞉ X , is-prop (P x))
+              → (x y : Σ P)
+              → (x ＝ y) ≃ (pr₁ x ＝ pr₁ y)
+subtype-equiv {_} {_} {X} P p (x , px) (y , py) = forwards , ((backwards , p-has-section) , (backwards , p-is-section))
+ where
+  h : {x : X} {px px' : P x} → px ＝ px' → x , px ＝ x , px'
+  h refl = refl
+
+  forwards : (x , px) ＝ (y , py) → x ＝ y
+  forwards refl = refl
+
+  backwards : x ＝ y → (x , px) ＝ (y , py)
+  backwards refl = h (p x px py)
+
+  p-has-section : forwards ∘ backwards ∼ id
+  p-has-section refl = t (p x px py)
+   where
+    t : px ＝ py → (forwards ∘ backwards) refl ＝ id refl
+    t refl = ap (forwards ∘ h) (props-are-sets (p x) (p x px px) refl)
+
+  p-is-section : backwards ∘ forwards ∼ id
+  p-is-section refl = ap h (props-are-sets (p x) (p x px px) refl)
+
+\end{code}
+
+Added by Anna Williams 24 November 2025
+
+\begin{code}
+
+pi-equiv-to-sum-equiv : {X : 𝓤 ̇ }
+                        {P Q : X → 𝓥 ̇ }
+                      → ((x : X) → (P x) ≃ (Q x))
+                      → (Σ x ꞉ X , P x) ≃ (Σ x ꞉ X , Q x)
+pi-equiv-to-sum-equiv {_} {_} {X} {P} {Q} pa = (λ (x , Px) → x , pr₁ (pa x) Px) , (inv , left) , (inv' , right)
+ where
+  inv : (Σ x ꞉ X , Q x) → (Σ x ꞉ X , P x)
+  inv (x , Qx) = x , e-inverse _ (pr₂ (pa x)) Qx
+
+  inv' : (Σ x ꞉ X , Q x) → (Σ x ꞉ X , P x)
+  inv' (x , Qx) = x , pr₁ (pr₂ (pr₂ (pa x))) Qx
+
+  left : (λ x → inv x .pr₁ , pr₁ (pa (inv x .pr₁)) (inv x .pr₂)) ∼ (λ x → x)
+  left (x , Qx) = to-Σ-＝ (refl , (pr₂ (pr₁ (pr₂ (pa x))) Qx))
+
+  right : (λ x → inv' (x .pr₁ , pr₁ (pa (x .pr₁)) (x .pr₂))) ∼ (λ x → x) 
+  right (x , Px) = to-Σ-＝ (refl , pr₂ (pr₂ (pr₂ (pa x))) Px)
 
 \end{code}
 
@@ -122,13 +179,13 @@ be done using SIP.
         where
          equality : g ＝ g'
          equality = g                    ＝⟨ refl ⟩
-                    (λ x → id (g x))     ＝⟨ i ⟩
-                    (λ x → g' (f (g x))) ＝⟨ ii ⟩
+                    (λ x → id (g x))     ＝⟨ I ⟩
+                    (λ x → g' (f (g x))) ＝⟨ II ⟩
                     (λ x → g' (id x))    ＝⟨ refl ⟩
                     g' ∎
           where
-           i = e-inverse _ (fe _ _) (λ x → (gp' (g x))⁻¹)
-           ii = e-inverse _ (fe _ _) (λ x → ap g' (gp x))
+           I = e-inverse _ (fe _ _) (λ x → (gp' (g x))⁻¹)
+           II = e-inverse _ (fe _ _) (λ x → ap g' (gp x))
 
      equiv-equiv-iso : (f : X → Y)
                      → is-equiv f ≃ inverse {_} {_} {_} {X , sX} {Y , sY} f
