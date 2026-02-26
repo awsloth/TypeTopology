@@ -26,7 +26,7 @@ open import UF.Univalence
 module Categories.Examples.Magma where
 
 module _ {𝓤 : Universe} (fe : Fun-Ext) where
- Magma : (𝓤 ⁺) ̇
+ Magma : 𝓤 ⁺ ̇
  Magma = Σ X ꞉ 𝓤 ̇ , (X → X → X) × is-set X
 
  MagmaWildcat : WildCategory (𝓤 ⁺) 𝓤
