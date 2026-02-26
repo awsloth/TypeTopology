@@ -29,7 +29,7 @@ module Categories.Displayed.Examples.Magma where
 
 \end{code}
 
-We define the category.
+We define the precategory of magmas.
 
 \begin{code}
 
@@ -58,6 +58,12 @@ module _ {𝓤 : Universe} {fe : Fun-Ext} where
 
  MagmaTot : Precategory (𝓤 ⁺) 𝓤
  MagmaTot = TotalPrecategory DMagma
+
+\end{code}
+
+We now defined the category of magmas.
+
+\being{code}
 
  open DispPrecatNotation DMagma
 
