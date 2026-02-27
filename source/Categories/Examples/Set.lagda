@@ -37,17 +37,16 @@ module _ {𝓤 : Universe} where
  Sets : 𝓤 ⁺ ̇
  Sets = Σ X ꞉ 𝓤 ̇ , is-set-explicit X
 
- SetWildcat : WildCategory (𝓤 ⁺) 𝓤
- SetWildcat = wildcategory
-                       Sets
-                       (λ (X , _) (Y , _) → (X → Y))
-                       (λ x → x)
-                       (λ g f x → g (f x))
-                       (λ _ → refl)
-                       (λ _ → refl)
-                       (λ _ _ _ → refl)
+ SetWildCategory : WildCategory (𝓤 ⁺) 𝓤
+ SetWildCategory = wildcategory Sets
+                                (λ (X , _) (Y , _) → (X → Y))
+                                (λ x → x)
+                                (λ g f x → g (f x))
+                                (λ _ → refl)
+                                (λ _ → refl)
+                                (λ _ _ _ → refl)
 
- open WildCategoryNotation SetWildcat
+ open WildCategoryNotation SetWildCategory
 
 \end{code}
 
@@ -55,10 +54,10 @@ We can now define the precategory of sets.
 
 \begin{code}
 
- SetPrecat : (fe : Fun-Ext) → Precategory (𝓤 ⁺) 𝓤
- SetPrecat fe = (SetWildcat , set-is-precat)
+ SetPrecategory : (fe : Fun-Ext) → Precategory (𝓤 ⁺) 𝓤
+ SetPrecategory fe = (SetWildCategory , set-is-precat)
   where
-   set-is-precat : is-precategory SetWildcat
+   set-is-precat : is-precategory SetWildCategory
    set-is-precat (X , sX) (Y , sY) {x} {y}
     = Π-is-set fe (λ - {a} {b} → sY a b) {x} {y}
 
@@ -136,19 +135,19 @@ be done using SIP.
                      → is-equiv f ≃ inverse {_} {_} {_} {X , sX} {Y , sY} f
      equiv-equiv-iso f = ≃-comp (lem' f) (qinv-equiv-iso f)
 
- SetCat : (ua : is-univalent 𝓤)
-          (fe : Fun-Ext)
-        → Category (𝓤 ⁺) 𝓤
- SetCat ua fe = SetPrecat fe , univalence-property
+ SetCategory : (ua : is-univalent 𝓤)
+               (fe : Fun-Ext)
+             → Category (𝓤 ⁺) 𝓤
+ SetCategory ua fe = SetPrecategory fe , univalence-property
   where
-   h : (a b : obj SetWildcat) → id-to-iso a b ∼ ⌜ lem ua fe a b ⌝
+   h : (a b : obj SetWildCategory) → id-to-iso a b ∼ ⌜ lem ua fe a b ⌝
    h (a , sA) b refl
     = to-Σ-＝ (refl
             , (to-Σ-＝ (refl
                      , to-×-＝ (Π-is-set fe (λ x → sA _ _) _ _)
                                (Π-is-set fe (λ x → sA _ _) _ _))))
 
-   univalence-property : is-category (SetPrecat fe)
+   univalence-property : is-category (SetPrecategory fe)
    univalence-property a b
     = equiv-closed-under-∼ ⌜ lem ua fe a b ⌝
                            (id-to-iso a b)

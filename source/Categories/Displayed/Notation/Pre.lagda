@@ -135,9 +135,9 @@ module _ {𝓤 𝓥 : Universe}
  open DNotation {{...}} public
 
 
-module DispPrecatNotation {𝓦 𝓣 : Universe}
-                          {P : Precategory 𝓦 𝓣}
-                          (D : DisplayedPrecategory 𝓤 𝓥 P) where
+module DisplayedPrecategoryNotation {𝓦 𝓣 : Universe}
+                                    {P : Precategory 𝓦 𝓣}
+                                    (D : DisplayedPrecategory 𝓤 𝓥 P) where
  instance
   d-obj : DOBJ D
   obj[_] {{d-obj}} = DisplayedPrecategory.obj[_] D

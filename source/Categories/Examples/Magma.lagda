@@ -29,14 +29,15 @@ module _ {𝓤 : Universe} (fe : Fun-Ext) where
  Magma : 𝓤 ⁺ ̇
  Magma = Σ X ꞉ 𝓤 ̇ , (X → X → X) × is-set X
 
- MagmaWildcat : WildCategory (𝓤 ⁺) 𝓤
- MagmaWildcat = wildcategory Magma
-                             magma-hom
-                             (λ {a} → magma-id {a})
-                             (λ {a} {b} {c} → magma-comp {a} {b} {c})
-                             (λ {a} {b} → magma-l-id {a} {b})
-                             (λ {a} {b} → magma-r-id {a} {b})
-                             λ {a} {b} {c} {d} → magma-assoc {a} {b} {c} {d}
+ MagmaWildCategory : WildCategory (𝓤 ⁺) 𝓤
+ MagmaWildCategory = wildcategory Magma
+                                  magma-hom
+                                  (λ {a} → magma-id {a})
+                                  (λ {a} {b} {c} → magma-comp {a} {b} {c})
+                                  (λ {a} {b} → left-id-neutral {a} {b})
+                                  (λ {a} {b} → right-id-neutral {a} {b})
+                                  λ {a} {b} {c} {d}
+                                    → magma-assoc {a} {b} {c} {d}
   where
    magma-hom : (a b : Magma) → 𝓤 ̇
    magma-hom (X , _·_ , _)
@@ -61,23 +62,19 @@ module _ {𝓤 : Universe} (fe : Fun-Ext) where
                          f (g x * g y)         ＝⟨ fp (g x) (g y) ⟩
                          (f ∘ g) x ∙ (f ∘ g) y ∎
 
-   magma-l-id : {a b : Magma}
-                (f : magma-hom a b)
-              → magma-comp {a} {b} {b} (magma-id {b}) f ＝ f
-   magma-l-id {_} {_ , _ , sY} (f , pf) = to-Σ-＝ (refl , property-equality)
+   left-id-neutral : {a b : Magma}
+                     (f : magma-hom a b)
+                   → magma-comp {a} {b} {b} (magma-id {b}) f ＝ f
+   left-id-neutral {_} {_ , _ , sY} (f , pf) = to-Σ-＝ (refl , prop-equality)
     where
-     property-equality = dfunext fe
-                          λ x → dfunext fe
-                           λ y → sY _ _
+     prop-equality = dfunext fe (λ x → dfunext fe (λ y → sY _ _))
 
-   magma-r-id : {a b : Magma}
-                (f : magma-hom a b)
-              → magma-comp {a} {a} {b} f (magma-id {a}) ＝ f
-   magma-r-id {_} {_ , _ , sY} (f , pf) = to-Σ-＝ (refl , property-equality)
+   right-id-neutral : {a b : Magma}
+                      (f : magma-hom a b)
+                    → magma-comp {a} {a} {b} f (magma-id {a}) ＝ f
+   right-id-neutral {_} {_ , _ , sY} (f , pf) = to-Σ-＝ (refl , prop-equality)
     where
-     property-equality = dfunext fe
-                          λ x → dfunext fe
-                           λ y → sY _ _
+     prop-equality = dfunext fe (λ x → dfunext fe (λ y → sY _ _))
 
    magma-assoc : {a b c d : Magma}
                  (f : magma-hom a b)
@@ -86,13 +83,11 @@ module _ {𝓤 : Universe} (fe : Fun-Ext) where
                → magma-comp {a} {c} {d} h (magma-comp {a} {b} {c} g f)
                ＝ magma-comp {a} {b} {d} (magma-comp {b} {c} {d} h g) f
    magma-assoc {_} {_} {_} {_ , _ , S}
-               (f , pf) (g , pg) (h , ph) = to-Σ-＝ (refl , property-equality)
+               (f , pf) (g , pg) (h , ph) = to-Σ-＝ (refl , prop-equality)
     where
-     property-equality = dfunext fe
-                          λ x → dfunext fe
-                           λ y → S _ _
+     prop-equality = dfunext fe (λ x → dfunext fe (λ y → S _ _))
 
- open WildCategoryNotation MagmaWildcat
+ open WildCategoryNotation MagmaWildCategory
 
 \end{code}
 
@@ -101,9 +96,9 @@ We now show that this is a precategory
 \begin{code}
 
  MagmaPrecategory : Precategory (𝓤 ⁺) 𝓤
- MagmaPrecategory = MagmaWildcat , is-pre
+ MagmaPrecategory = MagmaWildCategory , is-pre
   where
-   is-pre : is-precategory MagmaWildcat
+   is-pre : is-precategory MagmaWildCategory
    is-pre (_ , _ , sX) (_ , _ , sY) = Σ-is-set (Π-is-set fe (λ _ → sY))
                                                 λ f → Π₂-is-set fe
                                                   λ x y → props-are-sets sY
