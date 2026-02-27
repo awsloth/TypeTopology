@@ -34,8 +34,8 @@ record DisplayedFunctor {P : Precategory 𝓦 𝓣}
                       : (𝓦 ⊔ 𝓣 ⊔ 𝓤 ⊔ 𝓤' ⊔ 𝓥 ⊔ 𝓥') ̇  where
  open PrecategoryNotation P
  open FunctorNotation F' renaming (functor-map to F)
- open DispPrecatNotation D
- open DispPrecatNotation D'
+ open DisplayedPrecategoryNotation D
+ open DisplayedPrecategoryNotation D'
  field
   F₀ : {p : obj P}
      → obj[ p ]

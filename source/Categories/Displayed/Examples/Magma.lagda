@@ -35,13 +35,13 @@ We define the precategory of magmas.
 
 
 module _ {𝓤 : Universe} {fe : Fun-Ext} where
- open PrecategoryNotation (SetPrecat {𝓤} fe)
+ open PrecategoryNotation (SetPrecategory {𝓤} fe)
 
  instance
   underlying-set : Underlying-Type Sets (𝓤 ̇  )
   ⟨_⟩ ⦃ underlying-set ⦄ (S , _) = S
 
- DMagma : DisplayedPrecategory 𝓤 𝓤 (SetPrecat fe)
+ DMagma : DisplayedPrecategory 𝓤 𝓤 (SetPrecategory fe)
  DMagma = record
           { obj[_] = λ (A , _) → (A → A → A)
           ; hom[_] = λ {(A , _)} f _·_ _*_ → (x y : A) → f (x · y) ＝ f x * f y
@@ -63,32 +63,37 @@ module _ {𝓤 : Universe} {fe : Fun-Ext} where
 
 We now defined the category of magmas.
 
-\being{code}
+\begin{code}
 
- open DispPrecatNotation DMagma
+ open DisplayedPrecategoryNotation DMagma
 
- DMagmaCat : DisplayedCategory 𝓤 𝓤 (SetPrecat fe)
+ DMagmaCat : DisplayedCategory 𝓤 𝓤 (SetPrecategory fe)
  DMagmaCat = DMagma , λ {a} {b} e x y → equivalence a b e x y
   where
-   equivalence : (a : obj (SetPrecat fe))
-                 (b : obj (SetPrecat fe))
+   equivalence : (a : obj (SetPrecategory fe))
+                 (b : obj (SetPrecategory fe))
                  (e : a ＝ b)
                  (x : obj[ a ])
                  (y : obj[ b ])
                → is-equiv (D-id-to-iso DMagma {a} {b} e x y)
-   equivalence a@(A , sA) b refl _·_ _*_ = (forwards , f-is-thing) , (forwards , f-has-thing) 
+   equivalence a@(A , sA) b refl _·_ _*_ = (backwards , has-section) 
+                                         , (backwards , is-section)
     where
-     forwards : _≅[_]_ {_} {_} {_} {_} {_} {_} {a} {a} _·_ (id , id , refl , refl) _*_
+     backwards : _≅[_]_ {_} {_} {_} {_} {_} {_} {a} {a}
+                 _·_ (id , id , refl , refl) _*_
               → dependent-Id obj[_] {a} refl _·_ _*_
-     forwards (f , g , for , bac) = dfunext fe λ x → dfunext fe λ y → f x y
+     backwards (f , g , for , bac) = dfunext fe λ x → dfunext fe λ y → f x y
 
-     f-is-thing : (λ x → D-id-to-iso DMagma refl _·_ _*_ (forwards x)) ∼ (λ x → x)
-     f-is-thing (f , g , for , bac) = to-Σ-＝ (Π₂-is-prop fe (λ x y → sA _ _) _ _
-                                            , to-Σ-＝ ((Π₂-is-prop fe (λ x y → sA _ _) _ _)
-                                            , to-×-＝ (Π₂-is-set fe (λ x y → props-are-sets (sA _ _)) _ _)
-                                                      (Π₂-is-set fe (λ x y → props-are-sets (sA _ _)) _ _)))
+     has-section : (λ x → D-id-to-iso DMagma refl _·_ _*_ (backwards x))
+                 ∼ (λ x → x)
+     has-section (f , g , for , bac)
+      = to-Σ-＝ (Π₂-is-prop fe (λ x y → sA _ _) _ _
+      , to-Σ-＝ ((Π₂-is-prop fe (λ x y → sA _ _) _ _)
+      , to-×-＝ (Π₂-is-set fe (λ x y → props-are-sets (sA _ _)) _ _)
+                (Π₂-is-set fe (λ x y → props-are-sets (sA _ _)) _ _)))
 
-     f-has-thing : (λ x → forwards (D-id-to-iso DMagma refl _·_ _*_ x)) ∼ (λ x → x)
-     f-has-thing x = Π₂-is-set fe (λ x y → sA _ _) _ _
+     is-section : (λ x → backwards (D-id-to-iso DMagma refl _·_ _*_ x))
+                ∼ (λ x → x)
+     is-section x = Π₂-is-set fe (λ x y → sA _ _) _ _
 
 \end{code}

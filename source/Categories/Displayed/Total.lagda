@@ -62,7 +62,6 @@ TotalPrecategory {𝓤} {𝓥} {𝓦} {𝓨} {P} D = (total-wild-category
   total-is-precategory : is-precategory total-wild-category
   total-is-precategory _ _ = Σ-is-set (hom-is-set P) (λ _ → hom[-]-is-set)
 
-
 TotalCategory : {𝓦 𝓨 : Universe}
                 {C : Category 𝓤 𝓥}
                 (D : DisplayedCategory 𝓦 𝓨 ⟨ C ⟩)
@@ -100,6 +99,5 @@ TotalCategory {_} {_} {_} {_} {C} D = TotalPrecategory ⟨ D ⟩ , total-is-cate
 
     is-section : (e : a , x ＝ b , y) → forwards (id-to-iso (a , x) (b , y) e) ＝ e
     is-section refl = {!!}
-      
+     
 \end{code}
-
