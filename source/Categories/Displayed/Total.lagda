@@ -40,7 +40,7 @@ TotalPrecategory {𝓤} {𝓥} {𝓦} {𝓨} {P} D = (total-wild-category
                                           , total-is-precategory)
  where
   open PrecategoryNotation P
-  open DispPrecatNotation D
+  open DisplayedPrecategoryNotation D
 
   total-wild-category : WildCategory (𝓤 ⊔ 𝓦) (𝓥 ⊔ 𝓨)
   total-wild-category = wildcategory
@@ -71,7 +71,7 @@ TotalCategory {_} {_} {_} {_} {C} D = TotalPrecategory ⟨ D ⟩ , total-is-cate
  where
   open CategoryNotation C
   open PrecategoryNotation (TotalPrecategory ⟨ D ⟩)
-  open DispCatNotation D
+  open DisplayedCategoryNotation D
 
   total-is-category : is-category (TotalPrecategory ⟨ D ⟩)
   total-is-category (a , x) (b , y) = (forwards , has-section) , (forwards , is-section)
