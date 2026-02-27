@@ -26,7 +26,8 @@ module Categories.Examples.Set where
 
 \end{code}
 
-We first define the WildCategory of Sets
+First we define Sets under a given universe 𝓤. We first define sets, which is a
+type A, such that for all a b : A, a ＝ b is a proposition.
 
 \begin{code}
 
@@ -37,11 +38,17 @@ module _ {𝓤 : Universe} where
  Sets : 𝓤 ⁺ ̇
  Sets = Σ X ꞉ 𝓤 ̇ , is-set-explicit X
 
+\end{code}
+
+We can now easily define the wild category of sets.
+
+\begin{code}
+
  SetWildCategory : WildCategory (𝓤 ⁺) 𝓤
  SetWildCategory = wildcategory Sets
                                 (λ (X , _) (Y , _) → (X → Y))
-                                (λ x → x)
-                                (λ g f x → g (f x))
+                                id
+                                _∘_
                                 (λ _ → refl)
                                 (λ _ → refl)
                                 (λ _ _ _ → refl)
@@ -55,11 +62,11 @@ We can now define the precategory of sets.
 \begin{code}
 
  SetPrecategory : (fe : Fun-Ext) → Precategory (𝓤 ⁺) 𝓤
- SetPrecategory fe = (SetWildCategory , set-is-precat)
+ SetPrecategory fe = (SetWildCategory , set-is-precategory)
   where
-   set-is-precat : is-precategory SetWildCategory
-   set-is-precat (X , sX) (Y , sY) {x} {y}
-    = Π-is-set fe (λ - {a} {b} → sY a b) {x} {y}
+   set-is-precategory : is-precategory SetWildCategory
+   set-is-precategory (X , sX) (Y , sY) {x} {y}
+    = Π-is-set fe (λ _ → sY _ _) {x} {y}
 
 \end{code}
 
@@ -68,22 +75,25 @@ be done using SIP.
 
 \begin{code}
 
- lem : (ua : is-univalent 𝓤)
+ id-equiv-iso : (ua : is-univalent 𝓤)
        (fe : Fun-Ext)
        (A B : Sets)
      → (A ＝ B) ≃ (A ≅ B)
- lem ua fe (X , sX) (Y , sY) = ((X , sX) ＝ (Y , sY)) ≃⟨ i ⟩
-                               (X ＝ Y)               ≃⟨ idtoeq X Y , ua X Y ⟩
-                               (X ≃ Y)                ≃⟨ ii ⟩
-                               (X , sX) ≅ (Y , sY)    ■
+ id-equiv-iso ua fe (X , sX) (Y , sY) = ((X , sX) ＝ (Y , sY)) ≃⟨ i ⟩
+                                        (X ＝ Y)               ≃⟨ ii ⟩
+                                        (X ≃ Y)                ≃⟨ iii ⟩
+                                        (X , sX) ≅ (Y , sY)    ■
   where
    i : (X , sX ＝ Y , sY) ≃ (X ＝ Y)
    i = subtype-equiv is-set-explicit (λ _ → Π₂-is-prop fe
                                       (λ x y → being-prop-is-prop fe))
                                        (X , sX) (Y , sY)
 
-   ii : (X ≃ Y) ≃ (X , sX) ≅ (Y , sY)
-   ii = Σ-cong equiv-equiv-iso
+   ii : (X ＝ Y) ≃ (X ≃ Y)
+   ii = idtoeq X Y , ua X Y
+
+   iii : (X ≃ Y) ≃ (X , sX) ≅ (Y , sY)
+   iii = Σ-cong equiv-equiv-iso
     where
      qinv-equiv-iso : (f : X → Y)
                     → qinv f ≃ inverse {_} {_} {_} {X , sX} {Y , sY} f
@@ -107,10 +117,10 @@ be done using SIP.
                                    , (to-×-＝ (dfunext fe (λ x → sX _ _ _ _))
                                               (dfunext fe (λ y → sY _ _ _ _))))
 
-     lem' : (f : X → Y) → is-equiv f ≃ qinv f
-     lem' f = (equivs-are-qinvs f)
-            , (((qinvs-are-equivs f) , left)
-            , (qinvs-are-equivs f , right))
+     is-equiv-equiv-qinv : (f : X → Y) → is-equiv f ≃ qinv f
+     is-equiv-equiv-qinv f = (equivs-are-qinvs f)
+                           , (qinvs-are-equivs f , left)
+                           , (qinvs-are-equivs f , right)
       where
        left : (λ x → equivs-are-qinvs f (qinvs-are-equivs f x)) ∼ (λ x → x)
        left e@(g , gl , gr) = to-Σ-＝ (refl
@@ -122,25 +132,31 @@ be done using SIP.
         = to-×-＝ refl (to-Σ-＝ (equality , (dfunext fe λ x → sX _ _ _ _)))
         where
          equality : g ＝ g'
-         equality = g                    ＝⟨ refl ⟩
-                    (λ x → id (g x))     ＝⟨ I ⟩
-                    (λ x → g' (f (g x))) ＝⟨ II ⟩
-                    (λ x → g' (id x))    ＝⟨ refl ⟩
-                    g' ∎
+         equality = g          ＝⟨ refl ⟩
+                    id ∘ g     ＝⟨ I ⟩
+                    g' ∘ f ∘ g ＝⟨ II ⟩
+                    g' ∘ id    ＝⟨ refl ⟩
+                    g'         ∎
           where
            I = e-inverse _ (fe _ _) (λ x → (gp' (g x))⁻¹)
            II = e-inverse _ (fe _ _) (λ x → ap g' (gp x))
 
      equiv-equiv-iso : (f : X → Y)
                      → is-equiv f ≃ inverse {_} {_} {_} {X , sX} {Y , sY} f
-     equiv-equiv-iso f = ≃-comp (lem' f) (qinv-equiv-iso f)
+     equiv-equiv-iso f = ≃-comp (is-equiv-equiv-qinv f) (qinv-equiv-iso f)
+
+\end{code}
+
+We can finally prove that Set forms a category.
+
+\begin{code}
 
  SetCategory : (ua : is-univalent 𝓤)
                (fe : Fun-Ext)
              → Category (𝓤 ⁺) 𝓤
  SetCategory ua fe = SetPrecategory fe , univalence-property
   where
-   h : (a b : obj SetWildCategory) → id-to-iso a b ∼ ⌜ lem ua fe a b ⌝
+   h : (a b : obj SetWildCategory) → id-to-iso a b ∼ ⌜ id-equiv-iso ua fe a b ⌝
    h (a , sA) b refl
     = to-Σ-＝ (refl
             , (to-Σ-＝ (refl
@@ -149,9 +165,9 @@ be done using SIP.
 
    univalence-property : is-category (SetPrecategory fe)
    univalence-property a b
-    = equiv-closed-under-∼ ⌜ lem ua fe a b ⌝
+    = equiv-closed-under-∼ ⌜ id-equiv-iso ua fe a b ⌝
                            (id-to-iso a b)
-                           (pr₂ (lem ua fe a b))
+                           (pr₂ (id-equiv-iso ua fe a b))
                            (h a b)
 
 \end{code}
